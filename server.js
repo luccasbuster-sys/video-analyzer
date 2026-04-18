@@ -1,7 +1,6 @@
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
-const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const db = require('./db');
@@ -14,18 +13,25 @@ const PORT = process.env.PORT || 10000;
 app.use(cors());
 app.use(express.json());
 
-// 🔥 REDIRECIONA RAIZ PARA PORTAL
+// ========================
+// 🔥 REDIRECIONAMENTOS
+// ========================
 app.get('/', (req, res) => {
-  return res.redirect('/portal/');
+  return res.redirect('/portal/index.html');
 });
 
-// 🔥 SERVE ARQUIVOS ESTÁTICOS
-app.use(express.static(path.join(__dirname, 'public')));
+app.get('/portal', (req, res) => {
+  return res.redirect('/portal/index.html');
+});
 
-// 🔥 GARANTE ACESSO AO PORTAL
 app.get('/portal/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'portal', 'index.html'));
+  return res.redirect('/portal/index.html');
 });
+
+// ========================
+// 🔥 ARQUIVOS ESTÁTICOS
+// ========================
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ========================
 // AUTH
@@ -54,7 +60,7 @@ const upload = multer({
 });
 
 // ========================
-// ANALYZE (TESTE SIMPLES)
+// ANALYZE
 // ========================
 app.post('/analyze', authMiddleware, upload.single('video'), async (req, res) => {
   try {
@@ -62,6 +68,7 @@ app.post('/analyze', authMiddleware, upload.single('video'), async (req, res) =>
       return res.status(400).json({ error: 'Sem vídeo' });
     }
 
+    // 🔥 Aqui depois você pode colocar OpenAI novamente
     return res.json({
       resultado: "APROVADO",
       score: 85,
