@@ -1,34 +1,96 @@
-const sqlite3 = require('sqlite3').verbose();
+const Database = require('better-sqlite3');
 const bcrypt = require('bcrypt');
 
-const db = new sqlite3.Database('./database.db');
+const db = new Database('./database.db');
 
-db.serialize(async () => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT UNIQUE,
-      password TEXT
-    )
-  `);
+db.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT UNIQUE,
+    password TEXT
+  )
+`);
 
-  // 🔥 USUÁRIO PADRÃO
-  const email = 'admin@admin.com';
-  const password = '123456';
+const email = 'admin@admin.com';
+const password = '123456';
 
-  const hash = await bcrypt.hash(password, 10);
+const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
-  db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
-    if (!user) {
-      db.run(
-        'INSERT INTO users (email, password) VALUES (?, ?)',
-        [email, hash],
-        () => {
-          console.log('👤 Usuário padrão criado: admin@admin.com / 123456');
-        }
-      );
+if (!user) {
+  const hash = bcrypt.hashSync(password, 10);
+
+  db.prepare(
+    'INSERT INTO users (email, password) VALUES (?, ?)'
+  ).run(email, hash);
+
+  console.log('👤 Usuário padrão criado: admin@admin.com / 123456');
+}
+
+module.exports = {
+  run(sql, params = [], callback) {
+    try {
+      const stmt = db.prepare(sql);
+      const result = stmt.run(...params);
+
+      if (callback) {
+        callback.call({ lastID: result.lastInsertRowid, changes: result.changes }, null);
+      }
+
+      return result;
+    } catch (err) {
+      if (callback) {
+        callback(err);
+        return;
+      }
+      throw err;
     }
-  });
-});
+  },
 
-module.exports = db;
+  get(sql, params = [], callback) {
+    try {
+      const stmt = db.prepare(sql);
+      const row = stmt.get(...params);
+
+      if (callback) {
+        callback(null, row);
+        return;
+      }
+
+      return row;
+    } catch (err) {
+      if (callback) {
+        callback(err);
+        return;
+      }
+      throw err;
+    }
+  },
+
+  all(sql, params = [], callback) {
+    try {
+      const stmt = db.prepare(sql);
+      const rows = stmt.all(...params);
+
+      if (callback) {
+        callback(null, rows);
+        return;
+      }
+
+      return rows;
+    } catch (err) {
+      if (callback) {
+        callback(err);
+        return;
+      }
+      throw err;
+    }
+  },
+
+  exec(sql) {
+    return db.exec(sql);
+  },
+
+  prepare(sql) {
+    return db.prepare(sql);
+  }
+};
