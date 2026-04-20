@@ -3,532 +3,832 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marketing Evaluator • Entrada</title>
+  <title>Marketing Evaluator</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
+    :root {
+      --bg: #07111f;
+      --bg-2: #0b1424;
+      --panel: rgba(10, 18, 34, 0.88);
+      --panel-2: rgba(15, 25, 45, 0.96);
+      --stroke: rgba(255, 255, 255, 0.08);
+      --text: #f4f7fb;
+      --muted: #97a6ba;
+      --primary: #7c5cff;
+      --primary-2: #5a42d6;
+      --success: #37d67a;
+      --warning: #ffcc4d;
+      --danger: #ff5d73;
+      --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --radius-xl: 28px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
     }
 
-    :root {
-      --bg-1: #09111f;
-      --bg-2: #111827;
-      --panel-left: rgba(255, 255, 255, 0.94);
-      --panel-right: linear-gradient(180deg, #101926 0%, #0a0f18 100%);
-      --text-dark: #1f2430;
-      --text-soft: #6f727c;
-      --text-light: #f4f7ff;
-      --accent: #78d2ff;
-      --accent-2: #4eb6ff;
-      --danger: #8f3b33;
-      --shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
-      --radius: 32px;
+    * {
+      box-sizing: border-box;
     }
 
     html, body {
-      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(93, 76, 255, 0.18), transparent 30%),
+        radial-gradient(circle at right center, rgba(0, 180, 255, 0.12), transparent 25%),
+        linear-gradient(180deg, #07101f 0%, #040913 100%);
+      color: var(--text);
       min-height: 100%;
     }
 
     body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top, rgba(120,210,255,0.18), transparent 25%),
-        linear-gradient(135deg, var(--bg-1), var(--bg-2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 24px;
     }
 
-    .frame {
-      width: min(920px, 100%);
-      border-radius: 38px;
-      background: rgba(255,255,255,0.15);
-      box-shadow: var(--shadow);
-      padding: 10px;
-    }
-
     .shell {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      min-height: 560px;
-      border-radius: var(--radius);
+      max-width: 1380px;
+      margin: 0 auto;
+      min-height: calc(100vh - 48px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 32px;
       overflow: hidden;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(4, 10, 20, 0.74);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(10px);
+      display: grid;
+      grid-template-columns: 430px 1fr;
     }
 
-    .panel-left,
-    .panel-right {
-      padding: 32px 30px;
-      position: relative;
-    }
-
-    .panel-left {
-      background: var(--panel-left);
-      color: var(--text-dark);
-    }
-
-    .panel-right {
-      background: var(--panel-right);
-      color: var(--text-light);
+    .left {
+      background: #f3f5f8;
+      color: #101828;
+      padding: 34px 30px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      min-height: 100%;
+    }
+
+    .right {
+      background:
+        radial-gradient(circle at top right, rgba(124, 92, 255, 0.18), transparent 25%),
+        linear-gradient(180deg, #07101d 0%, #030813 100%);
+      padding: 36px 28px;
+      min-height: 100%;
     }
 
     .eyebrow {
       font-size: 12px;
-      color: #8c8f99;
+      letter-spacing: 0.04em;
+      color: #7a8699;
       margin-bottom: 8px;
     }
 
-    .title-left {
-      font-size: clamp(28px, 2.4vw, 38px);
-      line-height: 1.05;
-      letter-spacing: -1px;
+    h1, h2, h3, h4, p {
+      margin: 0;
+    }
+
+    .title {
+      font-size: 28px;
+      line-height: 1.08;
+      font-weight: 800;
       margin-bottom: 18px;
-      max-width: 420px;
     }
 
-    .title-left strong {
-      color: #141821;
-      font-weight: 700;
-    }
-
-    .desc-left {
-      font-size: 14px;
+    .subtitle {
+      color: #344054;
+      font-size: 15px;
       line-height: 1.55;
-      max-width: 420px;
-      color: #3f4553;
+      margin-bottom: 24px;
+      max-width: 320px;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 24px;
     }
 
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 26px;
-    }
-
-    .chip {
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.8);
-      border: 1px solid rgba(0,0,0,0.06);
+    .pill {
       font-size: 12px;
-      color: #4b4f59;
+      color: #344054;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      padding: 9px 12px;
     }
 
-    .form-block {
-      max-width: 430px;
-      margin-top: 6px;
+    .field {
+      margin-bottom: 16px;
     }
 
     .label {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
       display: block;
-      font-size: 16px;
-      color: #212632;
-      font-weight: 600;
-      margin-bottom: 12px;
+      color: #111827;
     }
 
-    .field-wrap {
-      margin-bottom: 12px;
-    }
-
-    .text-input,
-    select {
+    .input, .select, .file-input {
       width: 100%;
-      height: 58px;
-      border: 1px solid rgba(0,0,0,0.08);
-      border-radius: 18px;
-      padding: 0 22px;
-      background: rgba(255,255,255,0.9);
-      color: #404652;
-      font-size: 16px;
+      border: 1px solid #d8e0ea;
+      background: #eaf1fb;
+      border-radius: 16px;
+      padding: 15px 16px;
+      font-size: 15px;
+      color: #0f172a;
       outline: none;
-      transition: .25s ease;
+      transition: 0.2s ease;
     }
 
-    .text-input:focus,
-    select:focus {
-      border-color: rgba(78,182,255,0.55);
-      box-shadow: 0 0 0 4px rgba(120,210,255,0.18);
-      transform: translateY(-1px);
+    .input:focus, .select:focus, .file-input:focus {
+      border-color: #8bb7ff;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
     }
 
-    .select-wrap {
-      position: relative;
-      margin-bottom: 12px;
-    }
-
-    select {
-      padding: 0 70px 0 22px;
-      appearance: none;
-    }
-
-    .select-arrow {
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      width: 52px;
-      height: 42px;
-      transform: translateY(-50%);
-      border-left: 1px solid rgba(0,0,0,0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #90939d;
-      font-size: 20px;
-      pointer-events: none;
-    }
-
-    .alert {
-      min-height: 26px;
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--danger);
-      margin-bottom: 18px;
-    }
-
-    .alert span {
-      display: none;
-    }
-
-    .alert.active span {
-      display: inline;
-    }
-
-    .btn {
+    .primary-btn {
       width: 100%;
-      height: 66px;
+      margin-top: 18px;
       border: none;
       border-radius: 999px;
-      cursor: pointer;
-      background: linear-gradient(180deg, #273141, #151b25);
-      color: #f4f8ff;
-      box-shadow:
-        0 12px 24px rgba(0,0,0,0.12),
-        0 0 0 2px rgba(120,210,255,0.28);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      font-size: 18px;
-      font-weight: 500;
-      transition: .25s ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .btn:disabled {
-      opacity: .92;
-      cursor: wait;
-    }
-
-    .btn-icon {
-      width: 28px;
-      height: 28px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-    }
-
-    .foot {
-      margin-top: 20px;
-      font-size: 14px;
-      line-height: 1.55;
-      color: #4f5564;
-    }
-
-    .status {
-      display: none;
-      margin-top: 14px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: rgba(120,210,255,0.12);
-      border: 1px solid rgba(120,210,255,0.26);
-      color: #23465e;
-      font-size: 14px;
-    }
-
-    .title-right {
-      font-size: clamp(28px, 2vw, 34px);
-      line-height: 1.05;
-      margin-bottom: 16px;
-      max-width: 360px;
-    }
-
-    .desc-right {
-      font-size: 14px;
-      line-height: 1.65;
-      color: rgba(244,247,255,0.78);
-      max-width: 360px;
-      margin-bottom: 28px;
-    }
-
-    .info-box {
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
-      border-radius: 20px;
-      padding: 18px;
-      margin-top: 10px;
-    }
-
-    .info-box strong {
-      display: block;
+      padding: 17px 18px;
       font-size: 16px;
-      margin-bottom: 10px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #354255 0%, #232f42 100%);
+      box-shadow: 0 16px 35px rgba(25, 35, 55, 0.28);
+      cursor: pointer;
+      transition: transform .18s ease, opacity .18s ease;
     }
 
-    .info-box p {
-      color: rgba(244,247,255,0.75);
+    .primary-btn:hover {
+      transform: translateY(-1px);
+      opacity: .98;
+    }
+
+    .helper-box {
+      margin-top: 14px;
+      border-radius: 14px;
+      border: 1px solid #cfe7ff;
+      background: #eaf5ff;
+      color: #1d4e89;
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 14px 16px;
+    }
+
+    .small-note {
+      margin-top: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #475467;
+    }
+
+    .hero {
+      max-width: 440px;
+      margin-top: 22px;
+    }
+
+    .hero-title {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .hero-text {
+      color: #d9e1ee;
+      font-size: 15px;
+      line-height: 1.65;
+      margin-bottom: 26px;
+    }
+
+    .hero-grid {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .hero-card {
+      background: rgba(16, 25, 45, 0.82);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    .hero-card h4 {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .hero-card p {
+      color: #d7dfeb;
       font-size: 14px;
       line-height: 1.6;
     }
 
-    @media (max-width: 980px) {
+    .hidden {
+      display: none !important;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 22px;
+    }
+
+    .topbar h2 {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .topbar p {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .logout-btn {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .upload-card,
+    .result-shell {
+      background: var(--panel);
+      border: 1px solid var(--stroke);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .upload-card {
+      margin-bottom: 20px;
+    }
+
+    .upload-grid {
+      display: grid;
+      grid-template-columns: 1.25fr auto;
+      gap: 14px;
+      align-items: end;
+      margin-top: 18px;
+    }
+
+    .upload-info {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .file-dark {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 14px;
+    }
+
+    .analyze-btn {
+      min-width: 180px;
+      border: none;
+      border-radius: 16px;
+      padding: 15px 18px;
+      font-size: 15px;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      cursor: pointer;
+      box-shadow: 0 16px 32px rgba(90, 66, 214, 0.34);
+    }
+
+    .status-line {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #dbe5f1;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .result-shell {
+      display: grid;
+      gap: 16px;
+    }
+
+    .result-head {
+      display: grid;
+      grid-template-columns: 1fr 150px;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .result-status-card,
+    .score-card,
+    .panel-card {
+      background: var(--panel-2);
+      border: 1px solid var(--stroke);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .section-overline {
+      font-size: 11px;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #98a8c0;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .result-status {
+      font-size: 34px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .result-summary-line {
+      color: #d9e1ee;
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .score-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(124,92,255,0.18), rgba(124,92,255,0.08));
+    }
+
+    .score-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #c8bcff;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .score-value {
+      font-size: 42px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .panel-card h3 {
+      font-size: 15px;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .panel-card p {
+      color: #dce6f5;
+      line-height: 1.65;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .panel-card.large p {
+      min-height: 72px;
+    }
+
+    .panel-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .list-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .list-card {
+      background: var(--panel-2);
+      border: 1px solid var(--stroke);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .list-card h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+
+    .list-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #e5ecf7;
+    }
+
+    .list-card li {
+      margin-bottom: 8px;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .positive h3 { color: var(--success); }
+    .negative h3 { color: var(--danger); }
+    .warning h3 { color: var(--warning); }
+
+    .empty {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .success-text { color: var(--success); }
+    .warning-text { color: var(--warning); }
+    .danger-text { color: var(--danger); }
+
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    @media (max-width: 1180px) {
       .shell {
         grid-template-columns: 1fr;
       }
-    }
 
-    @media (max-width: 640px) {
-      body {
-        padding: 14px;
+      .left {
+        order: 2;
       }
 
-      .frame {
-        padding: 8px;
-        border-radius: 24px;
+      .right {
+        order: 1;
+      }
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 12px;
       }
 
       .shell {
-        border-radius: 20px;
+        border-radius: 22px;
       }
 
-      .panel-left,
-      .panel-right {
-        padding: 24px 20px;
+      .left, .right {
+        padding: 22px 18px;
       }
 
-      .title-left {
-        font-size: 28px;
+      .upload-grid,
+      .result-head,
+      .grid-2,
+      .list-wrap {
+        grid-template-columns: 1fr;
       }
 
-      .text-input,
-      select {
-        height: 54px;
-        font-size: 15px;
-        border-radius: 16px;
-      }
-
-      .btn {
-        height: 60px;
-        font-size: 17px;
+      .topbar {
+        flex-direction: column;
       }
     }
   </style>
 </head>
 <body>
-  <main class="frame">
-    <section class="shell">
-      <div class="panel-left">
-        <div class="eyebrow">Acesso inteligente ao sistema</div>
+  <div class="shell">
+    <aside class="left">
+      <div class="eyebrow">Acesso inteligente ao sistema</div>
+      <div class="title">Bem-vindos ao<br>Marketing Evaluator</div>
+      <div class="subtitle">
+        Preencha sua identificação para acessar o ambiente de trabalho.
+      </div>
 
-        <h1 class="title-left">
-          Bem-vindos ao<br />
-          <strong>Marketing Evaluator</strong>
-        </h1>
+      <div class="pills">
+        <span class="pill">Marketing</span>
+        <span class="pill">Avaliação</span>
+        <span class="pill">Identificação</span>
+        <span class="pill">Acesso</span>
+      </div>
 
-        <p class="desc-left">
-          Preencha sua identificação para acessar o ambiente de trabalho.
-        </p>
-
-        <div class="chips">
-          <span class="chip">Marketing</span>
-          <span class="chip">Avaliação</span>
-          <span class="chip">Identificação</span>
-          <span class="chip">Acesso</span>
-        </div>
-
-        <form id="accessForm" class="form-block">
+      <div id="loginBox">
+        <div class="field">
           <label class="label" for="email">E-mail</label>
-          <div class="field-wrap">
-            <input
-              id="email"
-              class="text-input"
-              type="email"
-              placeholder="Digite seu e-mail"
-              required
-            />
-          </div>
+          <input class="input" id="email" placeholder="admin@admin.com" />
+        </div>
 
+        <div class="field">
           <label class="label" for="password">Senha</label>
-          <div class="field-wrap">
-            <input
-              id="password"
-              class="text-input"
-              type="password"
-              placeholder="Digite sua senha"
-              required
-            />
-          </div>
+          <input class="input" id="password" type="password" placeholder="••••••" />
+        </div>
 
-          <label class="label" for="role">Quem está acessando</label>
+        <div class="field">
+          <label class="label" for="accessingAs">Quem está acessando</label>
+          <select class="select" id="accessingAs">
+            <option>Social Media</option>
+            <option>Gestor</option>
+            <option>Comercial</option>
+            <option>Analista</option>
+          </select>
+        </div>
 
-          <div class="select-wrap">
-            <select id="role" required>
-              <option value="">Selecione sua função...</option>
-              <option value="social-media">Social Media</option>
-              <option value="trafego-pago">Tráfego Pago</option>
-              <option value="analista-marketing">Analista de Marketing</option>
-              <option value="gestor-marketing">Gestor de Marketing</option>
-              <option value="designer">Designer</option>
-            </select>
-            <div class="select-arrow">⌄</div>
-          </div>
+        <button class="primary-btn" onclick="login()">✦&nbsp;&nbsp;Validando acesso</button>
 
-          <div class="alert" id="alertBox">
-            <span id="alertText">Preencha e-mail, senha e função para continuar.</span>
-          </div>
+        <div id="loginStatus" class="helper-box hidden"></div>
 
-          <button class="btn" id="startBtn" type="submit">
-            <span class="btn-icon">💼</span>
-            <span>Iniciar trabalhos</span>
-          </button>
-
-          <div class="status" id="statusBox">
-            Identificação confirmada. Abrindo o ambiente principal...
-          </div>
-
-          <p class="foot">
-            Após a identificação, o sistema abrirá automaticamente o ambiente principal.
-          </p>
-        </form>
+        <div class="small-note">
+          Após a identificação, o sistema abrirá automaticamente o ambiente principal.
+        </div>
       </div>
 
-      <div class="panel-right">
-        <h2 class="title-right">
-          <strong>Identificação</strong> obrigatória
-        </h2>
+      <div id="appInfoBox" class="hidden">
+        <div class="helper-box">
+          Acesso confirmado. Ambiente principal liberado.
+        </div>
+      </div>
+    </aside>
 
-        <p class="desc-right">
+    <main class="right">
+      <div id="heroBox" class="hero">
+        <div class="hero-title">Identificação<br>obrigatória</div>
+        <div class="hero-text">
           Para a segurança do sistema, precisamos confirmar o perfil de quem está acessando.
-        </p>
-
-        <div class="info-box">
-          <strong>Fluxo atual</strong>
-          <p>
-            Portal → login → análise de vídeo.
-            Assim que o acesso for validado, o sistema abre a página principal.
-          </p>
         </div>
 
-        <div class="info-box">
-          <strong>Acesso online</strong>
-          <p>
-            Esta versão foi simplificada para garantir estabilidade no Render e evitar tela branca.
-          </p>
+        <div class="hero-grid">
+          <div class="hero-card">
+            <h4>Fluxo atual</h4>
+            <p>Portal → login → análise de vídeo. Assim que o acesso for validado, o sistema abre a página principal.</p>
+          </div>
+          <div class="hero-card">
+            <h4>Acesso online</h4>
+            <p>Esta versão já está preparada para uso online com transcrição, análise comercial e recomendações automáticas.</p>
+          </div>
         </div>
       </div>
-    </section>
-  </main>
+
+      <div id="app" class="hidden">
+        <div class="topbar">
+          <div>
+            <h2>Painel de análise de criativos</h2>
+            <p>Envie um vídeo e receba score, resumo, transcrição, legenda e recomendações de marketing.</p>
+          </div>
+          <button class="logout-btn" onclick="logout()">Sair</button>
+        </div>
+
+        <section class="upload-card" id="uploadCard">
+          <div class="section-overline">Nova análise</div>
+          <h3>Enviar vídeo para avaliação</h3>
+          <div class="upload-grid">
+            <input class="file-dark" type="file" id="file" accept="video/*,audio/*" />
+            <button class="analyze-btn" id="analyzeBtn" onclick="send()">Analisar agora</button>
+          </div>
+          <div class="upload-info">
+            <span id="fileNameInfo">Nenhum arquivo selecionado.</span>
+            <span>Upload local → transcrição → IA → diagnóstico final</span>
+          </div>
+          <div class="status-line" id="status">Aguardando envio...</div>
+          <div class="status-badge" id="statusBadge">Sistema pronto</div>
+        </section>
+
+        <section class="result-shell hidden" id="result">
+          <div class="result-head">
+            <div class="result-status-card">
+              <div class="section-overline">Status da análise</div>
+              <div class="result-status" id="statusLabel">—</div>
+              <div class="result-summary-line" id="summary">Aguardando análise...</div>
+            </div>
+            <div class="score-card">
+              <div class="score-label">Score final</div>
+              <div class="score-value" id="score">0</div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel-card">
+              <h3>Análise do roteiro</h3>
+              <p id="scriptAnalysis">—</p>
+            </div>
+            <div class="panel-card">
+              <h3>Legenda para Instagram</h3>
+              <p id="instagramCaption">—</p>
+            </div>
+            <div class="panel-card full large">
+              <h3>Transcrição completa</h3>
+              <p id="transcriptFull">—</p>
+            </div>
+          </div>
+
+          <div class="list-wrap">
+            <div class="list-card positive">
+              <h3>Pontos positivos</h3>
+              <ul id="positives"></ul>
+              <div class="empty hidden" id="positivesEmpty">Nenhum ponto positivo retornado.</div>
+            </div>
+
+            <div class="list-card negative">
+              <h3>Pontos negativos</h3>
+              <ul id="negatives"></ul>
+              <div class="empty hidden" id="negativesEmpty">Nenhum ponto negativo retornado.</div>
+            </div>
+
+            <div class="list-card warning" style="grid-column: 1 / -1;">
+              <h3>Ajustes recomendados</h3>
+              <ul id="adjustments"></ul>
+              <div class="empty hidden" id="adjustmentsEmpty">Nenhum ajuste recomendado.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
 
   <script>
-    const form = document.getElementById('accessForm');
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    const role = document.getElementById('role');
-    const alertBox = document.getElementById('alertBox');
-    const alertText = document.getElementById('alertText');
-    const statusBox = document.getElementById('statusBox');
-    const startBtn = document.getElementById('startBtn');
+    const loginBox = document.getElementById('loginBox');
+    const app = document.getElementById('app');
+    const heroBox = document.getElementById('heroBox');
+    const appInfoBox = document.getElementById('appInfoBox');
+    const loginStatus = document.getElementById('loginStatus');
 
-    const targetUrl = '/index.html';
-
-    localStorage.removeItem('token');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('userRole');
-
-    function showError(message) {
-      alertText.textContent = message;
-      alertBox.classList.add('active');
-      statusBox.style.display = 'none';
-      startBtn.disabled = false;
-      startBtn.innerHTML = '<span class="btn-icon">💼</span><span>Iniciar trabalhos</span>';
+    function setLoginStatus(message, type = 'info') {
+      loginStatus.classList.remove('hidden');
+      loginStatus.textContent = message;
+      loginStatus.style.background = type === 'error' ? '#fff1f3' : '#eaf5ff';
+      loginStatus.style.borderColor = type === 'error' ? '#ffc9d0' : '#cfe7ff';
+      loginStatus.style.color = type === 'error' ? '#a61b34' : '#1d4e89';
     }
 
-    function clearError() {
-      alertBox.classList.remove('active');
-      alertText.textContent = 'Preencha e-mail, senha e função para continuar.';
+    function showApp() {
+      loginBox.classList.add('hidden');
+      app.classList.remove('hidden');
+      heroBox.classList.add('hidden');
+      appInfoBox.classList.remove('hidden');
     }
 
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
+    function logout() {
+      localStorage.removeItem('token');
+      location.reload();
+    }
 
-      const emailValue = email.value.trim().toLowerCase();
-      const passwordValue = password.value;
-      const roleValue = role.value;
+    async function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
 
-      if (!emailValue || !passwordValue || !roleValue) {
-        showError('Preencha e-mail, senha e função para continuar.');
-        if (!emailValue) email.focus();
-        else if (!passwordValue) password.focus();
-        else role.focus();
+      if (!email || !password) {
+        setLoginStatus('Preencha e-mail e senha para continuar.', 'error');
         return;
       }
 
-      clearError();
-      statusBox.style.display = 'block';
-      statusBox.textContent = 'Validando acesso...';
-      startBtn.disabled = true;
-      startBtn.innerHTML = '<span class="btn-icon">✦</span><span>Validando acesso</span>';
-
       try {
+        setLoginStatus('Validando acesso...');
         const response = await fetch('/login', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: emailValue,
-            password: passwordValue
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
         });
 
         const data = await response.json();
 
-        if (!response.ok) {
-          showError(data.error || 'Não foi possível fazer login.');
+        if (data.error) {
+          setLoginStatus(data.error, 'error');
           return;
         }
 
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userEmail', data.user && data.user.email ? data.user.email : emailValue);
-        localStorage.setItem('userRole', roleValue);
-
-        statusBox.textContent = 'Acesso confirmado. Abrindo o ambiente principal...';
-
-        setTimeout(() => {
-          window.location.href = targetUrl;
-        }, 900);
+        localStorage.setItem('token', data.token || '');
+        setLoginStatus('Acesso confirmado. Abrindo o ambiente principal...');
+        showApp();
       } catch (error) {
-        showError('Erro ao conectar com o servidor.');
+        setLoginStatus('Erro no login. Tente novamente.', 'error');
       }
+    }
+
+    function fillList(id, emptyId, items) {
+      const list = document.getElementById(id);
+      const empty = document.getElementById(emptyId);
+
+      list.innerHTML = '';
+
+      if (!Array.isArray(items) || items.length === 0) {
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      empty.classList.add('hidden');
+
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        list.appendChild(li);
+      });
+    }
+
+    function applyStatusStyle(resultado) {
+      const label = document.getElementById('statusLabel');
+      label.classList.remove('success-text', 'warning-text', 'danger-text');
+
+      if (resultado === 'APROVADO') label.classList.add('success-text');
+      else if (resultado === 'AJUSTAR') label.classList.add('warning-text');
+      else label.classList.add('danger-text');
+    }
+
+    async function send() {
+      const fileInput = document.getElementById('file');
+      const file = fileInput.files[0];
+      const result = document.getElementById('result');
+      const status = document.getElementById('status');
+      const statusBadge = document.getElementById('statusBadge');
+      const uploadCard = document.getElementById('uploadCard');
+      const analyzeBtn = document.getElementById('analyzeBtn');
+
+      if (!file) {
+        status.textContent = 'Selecione um vídeo antes de iniciar.';
+        statusBadge.textContent = 'Arquivo ausente';
+        return;
+      }
+
+      const fd = new FormData();
+      fd.append('video', file);
+
+      uploadCard.classList.add('loading');
+      analyzeBtn.disabled = true;
+      status.textContent = 'Enviando arquivo e processando com IA...';
+      statusBadge.textContent = 'Processando análise';
+      document.getElementById('fileNameInfo').textContent = file.name;
+
+      try {
+        const response = await fetch('/analyze', {
+          method: 'POST',
+          body: fd
+        });
+
+        const data = await response.json();
+        console.log('RESPOSTA:', data);
+
+        if (data.error) {
+          status.textContent = data.detalhe ? `${data.error}: ${data.detalhe}` : data.error;
+          statusBadge.textContent = 'Falha na análise';
+          uploadCard.classList.remove('loading');
+          analyzeBtn.disabled = false;
+          return;
+        }
+
+        result.classList.remove('hidden');
+
+        document.getElementById('statusLabel').textContent = data.resultado || '—';
+        document.getElementById('score').textContent = data.score ?? '0';
+        document.getElementById('summary').textContent = data.summary || 'Sem resumo';
+        document.getElementById('scriptAnalysis').textContent = data.script_analysis || 'Sem análise';
+        document.getElementById('instagramCaption').textContent = data.instagram_caption || 'Sem legenda';
+        document.getElementById('transcriptFull').textContent = data.transcript_full || 'Sem transcrição';
+
+        fillList('positives', 'positivesEmpty', data.positives);
+        fillList('negatives', 'negativesEmpty', data.negatives);
+        fillList('adjustments', 'adjustmentsEmpty', data.adjustments);
+
+        applyStatusStyle(data.resultado);
+
+        status.textContent = 'Análise concluída com sucesso.';
+        statusBadge.textContent = 'Resultado disponível';
+      } catch (error) {
+        status.textContent = 'Erro ao processar a análise.';
+        statusBadge.textContent = 'Erro de comunicação';
+      } finally {
+        uploadCard.classList.remove('loading');
+        analyzeBtn.disabled = false;
+      }
+    }
+
+    document.getElementById('file').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      document.getElementById('fileNameInfo').textContent = file ? file.name : 'Nenhum arquivo selecionado.';
     });
 
-    [email, password, role].forEach(function (field) {
-      field.addEventListener('input', clearError);
-      field.addEventListener('change', clearError);
-    });
+    if (localStorage.getItem('token')) {
+      showApp();
+    }
   </script>
 </body>
 </html>
