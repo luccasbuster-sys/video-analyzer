@@ -31,17 +31,21 @@
     html, body {
       margin: 0;
       padding: 0;
+      min-height: 100%;
       font-family: Inter, Segoe UI, Arial, sans-serif;
       background:
         radial-gradient(circle at top left, rgba(93, 76, 255, 0.18), transparent 30%),
         radial-gradient(circle at right center, rgba(0, 180, 255, 0.12), transparent 25%),
         linear-gradient(180deg, #07101f 0%, #040913 100%);
       color: var(--text);
-      min-height: 100%;
     }
 
     body {
       padding: 24px;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     .shell {
@@ -129,7 +133,7 @@
       color: #111827;
     }
 
-    .input, .select, .file-input {
+    .input, .select {
       width: 100%;
       border: 1px solid #d8e0ea;
       background: #eaf1fb;
@@ -141,7 +145,7 @@
       transition: 0.2s ease;
     }
 
-    .input:focus, .select:focus, .file-input:focus {
+    .input:focus, .select:focus {
       border-color: #8bb7ff;
       box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
     }
@@ -166,6 +170,24 @@
       opacity: .98;
     }
 
+    .primary-btn.purple {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 16px 32px rgba(90, 66, 214, 0.34);
+    }
+
+    .secondary-btn {
+      width: 100%;
+      margin-top: 12px;
+      border: 1px solid #d0d9e5;
+      border-radius: 999px;
+      padding: 15px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #344054;
+      background: #fff;
+      cursor: pointer;
+    }
+
     .helper-box {
       margin-top: 14px;
       border-radius: 14px;
@@ -185,7 +207,7 @@
     }
 
     .hero {
-      max-width: 440px;
+      max-width: 520px;
       margin-top: 22px;
     }
 
@@ -230,8 +252,85 @@
       line-height: 1.6;
     }
 
-    .hidden {
-      display: none !important;
+    .entry-stage {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100%;
+      max-width: 620px;
+    }
+
+    .entry-kicker {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #b7c5da;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .entry-title {
+      font-size: 48px;
+      line-height: 1.02;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .entry-desc {
+      color: #d9e1ee;
+      font-size: 17px;
+      line-height: 1.7;
+      max-width: 560px;
+      margin-bottom: 28px;
+    }
+
+    .entry-points {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .entry-point {
+      background: rgba(16, 25, 45, 0.82);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .entry-point strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .entry-point span {
+      color: #d7dfeb;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .entry-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .entry-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 16px 24px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 16px 32px rgba(90, 66, 214, 0.34);
+    }
+
+    .entry-btn.secondary {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: none;
     }
 
     .topbar {
@@ -490,6 +589,10 @@
       .right {
         order: 1;
       }
+
+      .entry-title {
+        font-size: 36px;
+      }
     }
 
     @media (max-width: 760px) {
@@ -515,6 +618,10 @@
       .topbar {
         flex-direction: column;
       }
+
+      .entry-actions {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -534,7 +641,16 @@
         <span class="pill">Acesso</span>
       </div>
 
-      <div id="loginBox">
+      <div id="entrySideInfo">
+        <div class="helper-box">
+          O acesso ao ambiente principal só é liberado após a etapa de entrada e identificação.
+        </div>
+        <div class="small-note">
+          Fluxo obrigatório: entrada → identificação → painel de análise.
+        </div>
+      </div>
+
+      <div id="loginBox" class="hidden">
         <div class="field">
           <label class="label" for="email">E-mail</label>
           <input class="input" id="email" placeholder="admin@admin.com" />
@@ -556,6 +672,7 @@
         </div>
 
         <button class="primary-btn" onclick="login()">✦&nbsp;&nbsp;Validando acesso</button>
+        <button class="secondary-btn" onclick="backToEntry()">Voltar para entrada</button>
 
         <div id="loginStatus" class="helper-box hidden"></div>
 
@@ -568,11 +685,42 @@
         <div class="helper-box">
           Acesso confirmado. Ambiente principal liberado.
         </div>
+        <div class="small-note">
+          Sessão ativa no navegador atual.
+        </div>
       </div>
     </aside>
 
     <main class="right">
-      <div id="heroBox" class="hero">
+      <section id="entryScreen" class="entry-stage">
+        <div class="entry-kicker">acompanhamento inteligente</div>
+        <div class="entry-title">Tela de entrada<br>obrigatória</div>
+        <div class="entry-desc">
+          Antes de acessar o painel, o usuário precisa passar pela etapa inicial do portal. Só depois disso a identificação é exibida e o ambiente principal pode ser liberado.
+        </div>
+
+        <div class="entry-points">
+          <div class="entry-point">
+            <strong>Etapa 1 — Entrada</strong>
+            <span>Confirma o início do acesso ao sistema e organiza o fluxo correto do portal.</span>
+          </div>
+          <div class="entry-point">
+            <strong>Etapa 2 — Identificação</strong>
+            <span>Valida credenciais e perfil de acesso antes de abrir o painel de análise.</span>
+          </div>
+          <div class="entry-point">
+            <strong>Etapa 3 — Painel</strong>
+            <span>Libera upload, transcrição, score, legenda e recomendações com IA.</span>
+          </div>
+        </div>
+
+        <div class="entry-actions">
+          <button class="entry-btn" onclick="goToLogin()">Entrar no portal</button>
+          <button class="entry-btn secondary" onclick="clearSessionAndReload()">Limpar sessão</button>
+        </div>
+      </section>
+
+      <section id="loginHero" class="hero hidden">
         <div class="hero-title">Identificação<br>obrigatória</div>
         <div class="hero-text">
           Para a segurança do sistema, precisamos confirmar o perfil de quem está acessando.
@@ -588,9 +736,9 @@
             <p>Esta versão já está preparada para uso online com transcrição, análise comercial e recomendações automáticas.</p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div id="app" class="hidden">
+      <section id="app" class="hidden">
         <div class="topbar">
           <div>
             <h2>Painel de análise de criativos</h2>
@@ -662,15 +810,17 @@
             </div>
           </div>
         </section>
-      </div>
+      </section>
     </main>
   </div>
 
   <script>
+    const entryScreen = document.getElementById('entryScreen');
+    const loginHero = document.getElementById('loginHero');
     const loginBox = document.getElementById('loginBox');
     const app = document.getElementById('app');
-    const heroBox = document.getElementById('heroBox');
     const appInfoBox = document.getElementById('appInfoBox');
+    const entrySideInfo = document.getElementById('entrySideInfo');
     const loginStatus = document.getElementById('loginStatus');
 
     function setLoginStatus(message, type = 'info') {
@@ -681,15 +831,50 @@
       loginStatus.style.color = type === 'error' ? '#a61b34' : '#1d4e89';
     }
 
+    function showEntry() {
+      entryScreen.classList.remove('hidden');
+      loginHero.classList.add('hidden');
+      loginBox.classList.add('hidden');
+      app.classList.add('hidden');
+      appInfoBox.classList.add('hidden');
+      entrySideInfo.classList.remove('hidden');
+      loginStatus.classList.add('hidden');
+    }
+
+    function goToLogin() {
+      entryScreen.classList.add('hidden');
+      loginHero.classList.remove('hidden');
+      loginBox.classList.remove('hidden');
+      app.classList.add('hidden');
+      appInfoBox.classList.add('hidden');
+      entrySideInfo.classList.add('hidden');
+      loginStatus.classList.add('hidden');
+    }
+
     function showApp() {
+      entryScreen.classList.add('hidden');
+      loginHero.classList.add('hidden');
       loginBox.classList.add('hidden');
       app.classList.remove('hidden');
-      heroBox.classList.add('hidden');
       appInfoBox.classList.remove('hidden');
+      entrySideInfo.classList.add('hidden');
+      loginStatus.classList.add('hidden');
+    }
+
+    function backToEntry() {
+      localStorage.removeItem('portal_entry_ok');
+      showEntry();
+    }
+
+    function clearSessionAndReload() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('portal_entry_ok');
+      location.reload();
     }
 
     function logout() {
       localStorage.removeItem('token');
+      localStorage.removeItem('portal_entry_ok');
       location.reload();
     }
 
@@ -718,6 +903,7 @@
         }
 
         localStorage.setItem('token', data.token || '');
+        localStorage.setItem('portal_entry_ok', '1');
         setLoginStatus('Acesso confirmado. Abrindo o ambiente principal...');
         showApp();
       } catch (error) {
@@ -826,9 +1012,7 @@
       document.getElementById('fileNameInfo').textContent = file ? file.name : 'Nenhum arquivo selecionado.';
     });
 
-    if (localStorage.getItem('token')) {
-      showApp();
-    }
+    showEntry();
   </script>
 </body>
 </html>
