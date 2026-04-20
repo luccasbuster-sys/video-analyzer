@@ -7,21 +7,17 @@
   <style>
     :root {
       --bg: #07111f;
-      --bg-2: #0b1424;
-      --panel: rgba(10, 18, 34, 0.88);
-      --panel-2: rgba(15, 25, 45, 0.96);
+      --panel: rgba(10, 18, 34, 0.78);
+      --panel-2: rgba(11, 20, 36, 0.88);
       --stroke: rgba(255, 255, 255, 0.08);
       --text: #f4f7fb;
-      --muted: #97a6ba;
+      --muted: #a9b5c7;
       --primary: #7c5cff;
       --primary-2: #5a42d6;
       --success: #37d67a;
       --warning: #ffcc4d;
       --danger: #ff5d73;
       --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-      --radius-xl: 28px;
-      --radius-lg: 18px;
-      --radius-md: 14px;
     }
 
     * {
@@ -69,13 +65,43 @@
       display: flex;
       flex-direction: column;
       min-height: 100%;
+      position: relative;
+      z-index: 2;
     }
 
     .right {
-      background:
-        radial-gradient(circle at top right, rgba(124, 92, 255, 0.18), transparent 25%),
-        linear-gradient(180deg, #07101d 0%, #030813 100%);
+      position: relative;
+      min-height: 100%;
+      overflow: hidden;
       padding: 36px 28px;
+      background: linear-gradient(180deg, #07101d 0%, #030813 100%);
+    }
+
+    .right-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0.34;
+      filter: saturate(1.08) contrast(1.05) brightness(0.52);
+      background: #050b15;
+    }
+
+    .right-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(circle at top right, rgba(124, 92, 255, 0.22), transparent 25%),
+        linear-gradient(180deg, rgba(5, 11, 22, 0.22) 0%, rgba(3, 8, 19, 0.78) 100%);
+      pointer-events: none;
+    }
+
+    .right-content {
+      position: relative;
+      z-index: 2;
       min-height: 100%;
     }
 
@@ -170,11 +196,6 @@
       opacity: .98;
     }
 
-    .primary-btn.purple {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 16px 32px rgba(90, 66, 214, 0.34);
-    }
-
     .secondary-btn {
       width: 100%;
       margin-top: 12px;
@@ -206,58 +227,12 @@
       color: #475467;
     }
 
-    .hero {
-      max-width: 520px;
-      margin-top: 22px;
-    }
-
-    .hero-title {
-      font-size: 28px;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 12px;
-    }
-
-    .hero-text {
-      color: #d9e1ee;
-      font-size: 15px;
-      line-height: 1.65;
-      margin-bottom: 26px;
-    }
-
-    .hero-grid {
-      display: grid;
-      gap: 14px;
-      margin-bottom: 26px;
-    }
-
-    .hero-card {
-      background: rgba(16, 25, 45, 0.82);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-    }
-
-    .hero-card h4 {
-      font-size: 14px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-
-    .hero-card p {
-      color: #d7dfeb;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
     .entry-stage {
       display: flex;
       flex-direction: column;
       justify-content: center;
       min-height: 100%;
-      max-width: 620px;
+      max-width: 700px;
     }
 
     .entry-kicker {
@@ -270,10 +245,11 @@
     }
 
     .entry-title {
-      font-size: 48px;
+      font-size: 52px;
       line-height: 1.02;
       font-weight: 900;
       margin-bottom: 16px;
+      text-shadow: 0 8px 32px rgba(0,0,0,0.24);
     }
 
     .entry-desc {
@@ -288,13 +264,15 @@
       display: grid;
       gap: 14px;
       margin-bottom: 28px;
+      max-width: 620px;
     }
 
     .entry-point {
-      background: rgba(16, 25, 45, 0.82);
+      background: rgba(16, 25, 45, 0.72);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 18px;
       padding: 18px;
+      backdrop-filter: blur(6px);
     }
 
     .entry-point strong {
@@ -331,6 +309,53 @@
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.1);
       box-shadow: none;
+    }
+
+    .hero {
+      max-width: 520px;
+      margin-top: 22px;
+    }
+
+    .hero-title {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .hero-text {
+      color: #d9e1ee;
+      font-size: 15px;
+      line-height: 1.65;
+      margin-bottom: 26px;
+    }
+
+    .hero-grid {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .hero-card {
+      background: rgba(16, 25, 45, 0.74);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      backdrop-filter: blur(6px);
+    }
+
+    .hero-card h4 {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .hero-card p {
+      color: #d7dfeb;
+      font-size: 14px;
+      line-height: 1.6;
     }
 
     .topbar {
@@ -370,6 +395,7 @@
       border-radius: 22px;
       padding: 22px;
       box-shadow: var(--card-shadow);
+      backdrop-filter: blur(8px);
     }
 
     .upload-card {
@@ -455,6 +481,7 @@
       border: 1px solid var(--stroke);
       border-radius: 18px;
       padding: 18px;
+      backdrop-filter: blur(8px);
     }
 
     .section-overline {
@@ -539,6 +566,7 @@
       border: 1px solid var(--stroke);
       border-radius: 18px;
       padding: 18px;
+      backdrop-filter: blur(8px);
     }
 
     .list-card h3 {
@@ -588,10 +616,11 @@
 
       .right {
         order: 1;
+        min-height: 560px;
       }
 
       .entry-title {
-        font-size: 36px;
+        font-size: 38px;
       }
     }
 
@@ -615,12 +644,15 @@
         grid-template-columns: 1fr;
       }
 
-      .topbar {
+      .topbar,
+      .entry-actions,
+      .upload-info {
         flex-direction: column;
+        align-items: stretch;
       }
 
-      .entry-actions {
-        flex-direction: column;
+      .entry-title {
+        font-size: 32px;
       }
     }
   </style>
@@ -692,125 +724,132 @@
     </aside>
 
     <main class="right">
-      <section id="entryScreen" class="entry-stage">
-        <div class="entry-kicker">acompanhamento inteligente</div>
-        <div class="entry-title">Tela de entrada<br>obrigatória</div>
-        <div class="entry-desc">
-          Antes de acessar o painel, o usuário precisa passar pela etapa inicial do portal. Só depois disso a identificação é exibida e o ambiente principal pode ser liberado.
-        </div>
+      <video class="right-video" autoplay muted loop playsinline>
+        <source src="/portal/bg-video.mp4" type="video/mp4" />
+      </video>
+      <div class="right-overlay"></div>
 
-        <div class="entry-points">
-          <div class="entry-point">
-            <strong>Etapa 1 — Entrada</strong>
-            <span>Confirma o início do acesso ao sistema e organiza o fluxo correto do portal.</span>
+      <div class="right-content">
+        <section id="entryScreen" class="entry-stage">
+          <div class="entry-kicker">acompanhamento inteligente</div>
+          <div class="entry-title">Tela de entrada<br>obrigatória</div>
+          <div class="entry-desc">
+            Antes de acessar o painel, o usuário precisa passar pela etapa inicial do portal. Só depois disso a identificação é exibida e o ambiente principal pode ser liberado.
           </div>
-          <div class="entry-point">
-            <strong>Etapa 2 — Identificação</strong>
-            <span>Valida credenciais e perfil de acesso antes de abrir o painel de análise.</span>
-          </div>
-          <div class="entry-point">
-            <strong>Etapa 3 — Painel</strong>
-            <span>Libera upload, transcrição, score, legenda e recomendações com IA.</span>
-          </div>
-        </div>
 
-        <div class="entry-actions">
-          <button class="entry-btn" onclick="goToLogin()">Entrar no portal</button>
-          <button class="entry-btn secondary" onclick="clearSessionAndReload()">Limpar sessão</button>
-        </div>
-      </section>
+          <div class="entry-points">
+            <div class="entry-point">
+              <strong>Etapa 1 — Entrada</strong>
+              <span>Confirma o início do acesso ao sistema e organiza o fluxo correto do portal.</span>
+            </div>
+            <div class="entry-point">
+              <strong>Etapa 2 — Identificação</strong>
+              <span>Valida credenciais e perfil de acesso antes de abrir o painel de análise.</span>
+            </div>
+            <div class="entry-point">
+              <strong>Etapa 3 — Painel</strong>
+              <span>Libera upload, transcrição, score, legenda e recomendações com IA.</span>
+            </div>
+          </div>
 
-      <section id="loginHero" class="hero hidden">
-        <div class="hero-title">Identificação<br>obrigatória</div>
-        <div class="hero-text">
-          Para a segurança do sistema, precisamos confirmar o perfil de quem está acessando.
-        </div>
-
-        <div class="hero-grid">
-          <div class="hero-card">
-            <h4>Fluxo atual</h4>
-            <p>Portal → login → análise de vídeo. Assim que o acesso for validado, o sistema abre a página principal.</p>
+          <div class="entry-actions">
+            <button class="entry-btn" onclick="goToLogin()">Entrar no portal</button>
+            <button class="entry-btn secondary" onclick="clearSessionAndReload()">Limpar sessão</button>
           </div>
-          <div class="hero-card">
-            <h4>Acesso online</h4>
-            <p>Esta versão já está preparada para uso online com transcrição, análise comercial e recomendações automáticas.</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="app" class="hidden">
-        <div class="topbar">
-          <div>
-            <h2>Painel de análise de criativos</h2>
-            <p>Envie um vídeo e receba score, resumo, transcrição, legenda e recomendações de marketing.</p>
-          </div>
-          <button class="logout-btn" onclick="logout()">Sair</button>
-        </div>
-
-        <section class="upload-card" id="uploadCard">
-          <div class="section-overline">Nova análise</div>
-          <h3>Enviar vídeo para avaliação</h3>
-          <div class="upload-grid">
-            <input class="file-dark" type="file" id="file" accept="video/*,audio/*" />
-            <button class="analyze-btn" id="analyzeBtn" onclick="send()">Analisar agora</button>
-          </div>
-          <div class="upload-info">
-            <span id="fileNameInfo">Nenhum arquivo selecionado.</span>
-            <span>Upload local → transcrição → IA → diagnóstico final</span>
-          </div>
-          <div class="status-line" id="status">Aguardando envio...</div>
-          <div class="status-badge" id="statusBadge">Sistema pronto</div>
         </section>
 
-        <section class="result-shell hidden" id="result">
-          <div class="result-head">
-            <div class="result-status-card">
-              <div class="section-overline">Status da análise</div>
-              <div class="result-status" id="statusLabel">—</div>
-              <div class="result-summary-line" id="summary">Aguardando análise...</div>
-            </div>
-            <div class="score-card">
-              <div class="score-label">Score final</div>
-              <div class="score-value" id="score">0</div>
-            </div>
+        <section id="loginHero" class="hero hidden">
+          <div class="hero-title">Identificação<br>obrigatória</div>
+          <div class="hero-text">
+            Para a segurança do sistema, precisamos confirmar o perfil de quem está acessando.
           </div>
 
-          <div class="grid-2">
-            <div class="panel-card">
-              <h3>Análise do roteiro</h3>
-              <p id="scriptAnalysis">—</p>
+          <div class="hero-grid">
+            <div class="hero-card">
+              <h4>Fluxo atual</h4>
+              <p>Portal → login → análise de vídeo. Assim que o acesso for validado, o sistema abre a página principal.</p>
             </div>
-            <div class="panel-card">
-              <h3>Legenda para Instagram</h3>
-              <p id="instagramCaption">—</p>
-            </div>
-            <div class="panel-card full large">
-              <h3>Transcrição completa</h3>
-              <p id="transcriptFull">—</p>
-            </div>
-          </div>
-
-          <div class="list-wrap">
-            <div class="list-card positive">
-              <h3>Pontos positivos</h3>
-              <ul id="positives"></ul>
-              <div class="empty hidden" id="positivesEmpty">Nenhum ponto positivo retornado.</div>
-            </div>
-
-            <div class="list-card negative">
-              <h3>Pontos negativos</h3>
-              <ul id="negatives"></ul>
-              <div class="empty hidden" id="negativesEmpty">Nenhum ponto negativo retornado.</div>
-            </div>
-
-            <div class="list-card warning" style="grid-column: 1 / -1;">
-              <h3>Ajustes recomendados</h3>
-              <ul id="adjustments"></ul>
-              <div class="empty hidden" id="adjustmentsEmpty">Nenhum ajuste recomendado.</div>
+            <div class="hero-card">
+              <h4>Acesso online</h4>
+              <p>Esta versão já está preparada para uso online com transcrição, análise comercial e recomendações automáticas.</p>
             </div>
           </div>
         </section>
-      </section>
+
+        <section id="app" class="hidden">
+          <div class="topbar">
+            <div>
+              <h2>Painel de análise de criativos</h2>
+              <p>Envie um vídeo e receba score, resumo, transcrição, legenda e recomendações de marketing.</p>
+            </div>
+            <button class="logout-btn" onclick="logout()">Sair</button>
+          </div>
+
+          <section class="upload-card" id="uploadCard">
+            <div class="section-overline">Nova análise</div>
+            <h3>Enviar vídeo para avaliação</h3>
+            <div class="upload-grid">
+              <input class="file-dark" type="file" id="file" accept="video/*,audio/*" />
+              <button class="analyze-btn" id="analyzeBtn" onclick="send()">Analisar agora</button>
+            </div>
+            <div class="upload-info">
+              <span id="fileNameInfo">Nenhum arquivo selecionado.</span>
+              <span>Upload local → transcrição → IA → diagnóstico final</span>
+            </div>
+            <div class="status-line" id="status">Aguardando envio...</div>
+            <div class="status-badge" id="statusBadge">Sistema pronto</div>
+          </section>
+
+          <section class="result-shell hidden" id="result">
+            <div class="result-head">
+              <div class="result-status-card">
+                <div class="section-overline">Status da análise</div>
+                <div class="result-status" id="statusLabel">—</div>
+                <div class="result-summary-line" id="summary">Aguardando análise...</div>
+              </div>
+              <div class="score-card">
+                <div class="score-label">Score final</div>
+                <div class="score-value" id="score">0</div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="panel-card">
+                <h3>Análise do roteiro</h3>
+                <p id="scriptAnalysis">—</p>
+              </div>
+              <div class="panel-card">
+                <h3>Legenda para Instagram</h3>
+                <p id="instagramCaption">—</p>
+              </div>
+              <div class="panel-card full large">
+                <h3>Transcrição completa</h3>
+                <p id="transcriptFull">—</p>
+              </div>
+            </div>
+
+            <div class="list-wrap">
+              <div class="list-card positive">
+                <h3>Pontos positivos</h3>
+                <ul id="positives"></ul>
+                <div class="empty hidden" id="positivesEmpty">Nenhum ponto positivo retornado.</div>
+              </div>
+
+              <div class="list-card negative">
+                <h3>Pontos negativos</h3>
+                <ul id="negatives"></ul>
+                <div class="empty hidden" id="negativesEmpty">Nenhum ponto negativo retornado.</div>
+              </div>
+
+              <div class="list-card warning" style="grid-column: 1 / -1;">
+                <h3>Ajustes recomendados</h3>
+                <ul id="adjustments"></ul>
+                <div class="empty hidden" id="adjustmentsEmpty">Nenhum ajuste recomendado.</div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
     </main>
   </div>
 
