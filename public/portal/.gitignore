@@ -1,0 +1,7 @@
+.env
+uploads/
+frames/
+node_modules/
+*.mp4
+!public/portal/video.mp4
+public/portal/index-backup-ok.html
