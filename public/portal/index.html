@@ -3,1055 +3,2779 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marketing Evaluator</title>
+  <title>Marketing Evaluator AI — Video Analyzer</title>
   <style>
     :root {
-      --bg: #07111f;
-      --panel: rgba(10, 18, 34, 0.78);
-      --panel-2: rgba(11, 20, 36, 0.88);
-      --stroke: rgba(255, 255, 255, 0.08);
-      --text: #f4f7fb;
-      --muted: #a9b5c7;
-      --primary: #7c5cff;
-      --primary-2: #5a42d6;
-      --success: #37d67a;
-      --warning: #ffcc4d;
-      --danger: #ff5d73;
-      --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --bg: #060606;
+      --bg-soft: #0d0d0f;
+      --card: rgba(255,255,255,0.06);
+      --card-strong: rgba(255,255,255,0.09);
+      --stroke: rgba(255,255,255,0.12);
+      --text: #f6f2eb;
+      --muted: rgba(246,242,235,0.62);
+      --orange: #ff6a00;
+      --orange-2: #ff8d3b;
+      --orange-3: #ffb06f;
+      --green: #5dff9b;
+      --blue: #6ab8ff;
+      --purple: #b47cff;
+      --red: #ff6e7d;
+      --shadow: 0 20px 80px rgba(0,0,0,0.45);
+      --radius-xl: 34px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --max-width: 1380px;
+      --grid-gap: 22px;
+      --mouse-x: 50vw;
+      --mouse-y: 50vh;
+      --scroll: 0;
+      --hero-shift: 0px;
+      --accent-gradient: linear-gradient(135deg, #ff5a00 0%, #ff8d3b 35%, #ffd0a6 100%);
+      --glass-gradient: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+      --section-gradient: radial-gradient(circle at top left, rgba(255,106,0,0.16), transparent 35%), radial-gradient(circle at bottom right, rgba(255,106,0,0.10), transparent 24%), rgba(255,255,255,0.03);
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-      font-family: Inter, Segoe UI, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(93, 76, 255, 0.18), transparent 30%),
-        radial-gradient(circle at right center, rgba(0, 180, 255, 0.12), transparent 25%),
-        linear-gradient(180deg, #07101f 0%, #040913 100%);
-      color: var(--text);
-    }
-
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      padding: 24px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .shell {
-      max-width: 1380px;
-      margin: 0 auto;
-      min-height: calc(100vh - 48px);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 32px;
-      overflow: hidden;
-      background: rgba(4, 10, 20, 0.74);
-      box-shadow: var(--card-shadow);
-      backdrop-filter: blur(10px);
-      display: grid;
-      grid-template-columns: 430px 1fr;
-    }
-
-    .left {
-      background: #f3f5f8;
-      color: #101828;
-      padding: 34px 30px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100%;
-      position: relative;
-      z-index: 2;
-    }
-
-    .right {
-      position: relative;
-      min-height: 100%;
-      overflow: hidden;
-      padding: 36px 28px;
-      background: linear-gradient(180deg, #07101d 0%, #030813 100%);
-    }
-
-    .right-video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 0;
-      opacity: 0.34;
-      filter: saturate(1.08) contrast(1.05) brightness(0.52);
-      background: #050b15;
-    }
-
-    .right-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(circle at top right, rgba(124, 92, 255, 0.22), transparent 25%),
-        linear-gradient(180deg, rgba(5, 11, 22, 0.22) 0%, rgba(3, 8, 19, 0.78) 100%);
+        radial-gradient(circle at 15% 20%, rgba(255, 106, 0, 0.20), transparent 20%),
+        radial-gradient(circle at 85% 15%, rgba(255, 150, 80, 0.11), transparent 16%),
+        radial-gradient(circle at 50% 85%, rgba(255, 106, 0, 0.08), transparent 22%),
+        linear-gradient(180deg, #050505 0%, #09090b 45%, #050505 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      z-index: 0;
+      border-radius: 999px;
+      filter: blur(80px);
+      opacity: .8;
+      transition: transform .15s linear;
+    }
+
+    body::before {
+      width: 34vw;
+      height: 34vw;
+      left: calc(var(--mouse-x) - 17vw);
+      top: calc(var(--mouse-y) - 17vw);
+      background: radial-gradient(circle, rgba(255,110,10,0.17), rgba(255,110,10,0.08) 35%, transparent 70%);
+      mix-blend-mode: screen;
+    }
+
+    body::after {
+      width: 20vw;
+      height: 20vw;
+      left: calc(100vw - var(--mouse-x) - 10vw);
+      top: calc(100vh - var(--mouse-y) - 10vw);
+      background: radial-gradient(circle, rgba(255,255,255,0.08), rgba(255,160,90,0.05) 40%, transparent 70%);
+      opacity: 0.6;
+    }
+
+    #particleCanvas,
+    #gridCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
       pointer-events: none;
     }
 
-    .right-content {
+    .noise {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: .04;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.8) 0 1px, transparent 1px),
+        radial-gradient(circle at 80% 40%, rgba(255,255,255,.4) 0 1px, transparent 1px),
+        radial-gradient(circle at 40% 80%, rgba(255,255,255,.7) 0 1px, transparent 1px),
+        radial-gradient(circle at 70% 70%, rgba(255,255,255,.35) 0 1px, transparent 1px);
+      background-size: 180px 180px, 220px 220px, 140px 140px, 260px 260px;
+      animation: noiseFloat 18s linear infinite;
+    }
+
+    @keyframes noiseFloat {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-40px, -60px, 0); }
+    }
+
+    .page {
       position: relative;
       z-index: 2;
-      min-height: 100%;
     }
 
-    .eyebrow {
-      font-size: 12px;
-      letter-spacing: 0.04em;
-      color: #7a8699;
-      margin-bottom: 8px;
+    .container {
+      width: min(calc(100% - 40px), var(--max-width));
+      margin: 0 auto;
     }
 
-    h1, h2, h3, h4, p {
-      margin: 0;
+    .pill,
+    .ghost-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 13px;
+      letter-spacing: .03em;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      text-decoration: none;
+      color: inherit;
     }
 
-    .title {
-      font-size: 28px;
-      line-height: 1.08;
-      font-weight: 800;
-      margin-bottom: 18px;
+    .ghost-pill { background: rgba(255,255,255,0.03); }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      padding: 18px 0 0;
     }
 
-    .subtitle {
-      color: #344054;
-      font-size: 15px;
-      line-height: 1.55;
-      margin-bottom: 24px;
-      max-width: 320px;
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(8,8,10,0.65);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
     }
 
-    .pills {
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: var(--accent-gradient);
+      color: #0b0b0d;
+      font-weight: 900;
+      box-shadow: 0 12px 30px rgba(255,106,0,0.30);
+    }
+
+    .brand-text h1,
+    .brand-text p { margin: 0; }
+    .brand-text h1 { font-size: 14px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .brand-text p { font-size: 12px; color: var(--muted); }
+
+    .nav-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    .pill {
-      font-size: 12px;
-      color: #344054;
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 999px;
-      padding: 9px 12px;
-    }
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    .label {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      display: block;
-      color: #111827;
-    }
-
-    .input, .select {
-      width: 100%;
-      border: 1px solid #d8e0ea;
-      background: #eaf1fb;
-      border-radius: 16px;
-      padding: 15px 16px;
-      font-size: 15px;
-      color: #0f172a;
-      outline: none;
-      transition: 0.2s ease;
-    }
-
-    .input:focus, .select:focus {
-      border-color: #8bb7ff;
-      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
-    }
-
-    .primary-btn {
-      width: 100%;
-      margin-top: 18px;
-      border: none;
-      border-radius: 999px;
-      padding: 17px 18px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      background: linear-gradient(135deg, #354255 0%, #232f42 100%);
-      box-shadow: 0 16px 35px rgba(25, 35, 55, 0.28);
-      cursor: pointer;
-      transition: transform .18s ease, opacity .18s ease;
-    }
-
-    .primary-btn:hover {
-      transform: translateY(-1px);
-      opacity: .98;
-    }
-
-    .secondary-btn {
-      width: 100%;
-      margin-top: 12px;
-      border: 1px solid #d0d9e5;
-      border-radius: 999px;
-      padding: 15px 18px;
-      font-size: 15px;
-      font-weight: 700;
-      color: #344054;
-      background: #fff;
-      cursor: pointer;
-    }
-
-    .helper-box {
-      margin-top: 14px;
-      border-radius: 14px;
-      border: 1px solid #cfe7ff;
-      background: #eaf5ff;
-      color: #1d4e89;
-      font-size: 14px;
-      line-height: 1.5;
-      padding: 14px 16px;
-    }
-
-    .small-note {
-      margin-top: 16px;
-      font-size: 13px;
-      line-height: 1.5;
-      color: #475467;
-    }
-
-    .entry-stage {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-height: 100%;
-      max-width: 700px;
-    }
-
-    .entry-kicker {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color: #b7c5da;
-      margin-bottom: 12px;
-      font-weight: 700;
-    }
-
-    .entry-title {
-      font-size: 52px;
-      line-height: 1.02;
-      font-weight: 900;
-      margin-bottom: 16px;
-      text-shadow: 0 8px 32px rgba(0,0,0,0.24);
-    }
-
-    .entry-desc {
-      color: #d9e1ee;
-      font-size: 17px;
-      line-height: 1.7;
-      max-width: 560px;
-      margin-bottom: 28px;
-    }
-
-    .entry-points {
-      display: grid;
-      gap: 14px;
-      margin-bottom: 28px;
-      max-width: 620px;
-    }
-
-    .entry-point {
-      background: rgba(16, 25, 45, 0.72);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 18px;
-      backdrop-filter: blur(6px);
-    }
-
-    .entry-point strong {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
-    }
-
-    .entry-point span {
-      color: #d7dfeb;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .entry-actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .entry-btn {
-      border: none;
-      border-radius: 999px;
-      padding: 16px 24px;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      color: white;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 16px 32px rgba(90, 66, 214, 0.34);
-    }
-
-    .entry-btn.secondary {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: none;
+      justify-content: flex-end;
     }
 
     .hero {
-      max-width: 520px;
-      margin-top: 22px;
-    }
-
-    .hero-title {
-      font-size: 28px;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 12px;
-    }
-
-    .hero-text {
-      color: #d9e1ee;
-      font-size: 15px;
-      line-height: 1.65;
-      margin-bottom: 26px;
+      padding: 44px 0 26px;
     }
 
     .hero-grid {
       display: grid;
-      gap: 14px;
-      margin-bottom: 26px;
+      grid-template-columns: minmax(0, 1.1fr) minmax(340px, .9fr);
+      gap: 18px;
+      align-items: stretch;
     }
 
-    .hero-card {
-      background: rgba(16, 25, 45, 0.74);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-      backdrop-filter: blur(6px);
-    }
-
-    .hero-card h4 {
-      font-size: 14px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-
-    .hero-card p {
-      color: #d7dfeb;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 22px;
-    }
-
-    .topbar h2 {
-      font-size: 28px;
-      font-weight: 800;
-      line-height: 1.1;
-    }
-
-    .topbar p {
-      color: var(--muted);
-      font-size: 14px;
-      margin-top: 8px;
-    }
-
-    .logout-btn {
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      padding: 12px 16px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .upload-card,
+    .hero-main,
+    .hero-side,
+    .section-card,
+    .metric-card,
+    .analysis-card,
+    .micro-card,
+    .timeline-card,
+    .transcript-card,
+    .cta-banner,
+    .footer-card,
+    .upload-panel,
+    .mode-card,
+    .status-tile,
+    .summary-card,
+    .insight-card,
     .result-shell {
-      background: var(--panel);
-      border: 1px solid var(--stroke);
-      border-radius: 22px;
-      padding: 22px;
-      box-shadow: var(--card-shadow);
-      backdrop-filter: blur(8px);
+      position: relative;
+      border-radius: var(--radius-xl);
+      background: var(--glass-gradient);
+      border: 1px solid rgba(255,255,255,0.09);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
 
-    .upload-card {
-      margin-bottom: 20px;
-    }
-
-    .upload-grid {
-      display: grid;
-      grid-template-columns: 1.25fr auto;
-      gap: 14px;
-      align-items: end;
-      margin-top: 18px;
-    }
-
-    .upload-info {
+    .hero-main {
+      min-height: 640px;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 70% 14%, rgba(255,106,0,0.18), transparent 24%),
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)),
+        linear-gradient(160deg, rgba(9,9,11,0.92), rgba(15,15,18,0.86));
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
+      isolation: isolate;
+    }
+
+    .hero-main::before {
+      content: "";
+      position: absolute;
+      width: 46%;
+      aspect-ratio: 1 / 1.2;
+      right: 1%;
+      top: 3%;
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 40% 20%, rgba(255,180,120,.95), rgba(255,106,0,.25) 26%, transparent 46%),
+        linear-gradient(180deg, rgba(50,30,15,.2), rgba(0,0,0,.2)),
+        linear-gradient(140deg, #25170e, #0b0b0e);
+      filter: saturate(1.15) contrast(1.12);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 30px 90px rgba(0,0,0,.35);
+      transform: translate3d(calc(var(--hero-shift) * -.35), calc(var(--hero-shift) * .15), 0) rotate(-3deg);
+      opacity: 0.82;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      inset: auto 24px 22px auto;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(255,110,10,0.22), transparent 68%);
+      filter: blur(28px);
+      z-index: -1;
+      animation: pulseGlow 6s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: .65; }
+      50% { transform: scale(1.15); opacity: .95; }
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--orange-3);
+      font-size: 12px;
+      font-weight: 700;
+      width: fit-content;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 54%;
+      padding-right: 14px;
+    }
+
+    .hero-title {
+      margin: 16px 0 16px;
+      font-size: clamp(44px, 6.5vw, 86px);
+      line-height: .92;
+      letter-spacing: -0.06em;
+      font-weight: 900;
+      text-wrap: balance;
+      max-width: 8.6ch;
+    }
+
+    .hero-title .accent {
+      display: block;
+      background: linear-gradient(180deg, #fff 0%, #ffd8bf 55%, #ff934d 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmerText 5s linear infinite;
+      background-size: 200% auto;
+    }
+
+    @keyframes shimmerText {
+      from { background-position: 0% 50%; }
+      to { background-position: 200% 50%; }
+    }
+
+    .hero-subtitle {
+      max-width: 42ch;
+      font-size: clamp(14px, 1.2vw, 16px);
+      line-height: 1.74;
+      color: var(--muted);
+      margin: 0 0 22px;
+      text-wrap: pretty;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 0;
+      outline: 0;
+      color: #0b0b0d;
+      background: var(--accent-gradient);
+      padding: 16px 22px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 18px 35px rgba(255,106,0,.30);
+      overflow: hidden;
+      transition: transform .22s ease, box-shadow .22s ease, filter .22s ease;
+      isolation: isolate;
+      text-decoration: none;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      transform: translateX(-100%);
+      animation: shineMove 4.6s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes shineMove { to { transform: translateX(100%); } }
+
+    .btn:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 22px 44px rgba(255,106,0,.40); }
+    .btn:active { transform: translateY(0) scale(.985); }
+
+    .btn.secondary {
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+      max-width: 60%;
+    }
+
+    .metric-card {
+      padding: 14px 16px;
+      border-radius: 18px;
+      min-height: 92px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035));
+      transition: transform .25s ease, border-color .25s ease, background .25s ease;
+      transform-style: preserve-3d;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-6px) rotateX(4deg) rotateY(-4deg);
+      border-color: rgba(255,255,255,.20);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.045));
+    }
+
+    .metric-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+    .metric-value { margin-top: 8px; font-size: clamp(20px, 2.2vw, 30px); font-weight: 900; letter-spacing: -0.05em; line-height: 1; }
+    .metric-foot { margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+
+    .floating-orbs {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(5px);
+      opacity: .8;
+      animation: floatOrb linear infinite;
+      mix-blend-mode: screen;
+    }
+
+    .orb.orange { background: radial-gradient(circle, rgba(255,106,0,.55), rgba(255,106,0,.02)); }
+    .orb.white { background: radial-gradient(circle, rgba(255,255,255,.33), rgba(255,255,255,.02)); }
+
+    @keyframes floatOrb {
+      0% { transform: translate3d(0,0,0) scale(1); }
+      50% { transform: translate3d(18px,-30px,0) scale(1.15); }
+      100% { transform: translate3d(-12px,14px,0) scale(.92); }
+    }
+
+    .hero-side {
+      min-height: 640px;
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+      background:
+        radial-gradient(circle at 75% 18%, rgba(255,106,0,.12), transparent 20%),
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03)),
+        linear-gradient(180deg, #0b0b0e, #111114);
+      position: relative;
+      isolation: isolate;
+      align-content: end;
+    }
+
+    .hero-side-copy {
+      position: relative;
+      z-index: 3;
+      max-width: 92%;
+      margin-top: auto;
+      display: grid;
+      align-content: end;
+      gap: 8px;
+      padding: 32px 14px 10px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(10,10,12,0) 0%, rgba(10,10,12,.16) 18%, rgba(10,10,12,.58) 46%, rgba(10,10,12,.90) 100%);
+    }
+
+    .hero-side-title {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 2.7vw, 38px);
+      line-height: 1.02;
+      letter-spacing: -0.05em;
+      font-weight: 900;
+      max-width: 11ch;
+      text-wrap: balance;
+    }
+
+    .hero-side-text {
+      margin: 0 0 10px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--muted);
+      max-width: 32ch;
+    }
+
+    .marquee {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: 30px;
+      pointer-events: none;
+      background: transparent;
+      border: 0;
+      z-index: 1;
+      opacity: .18;
+      mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.98) 8%, rgba(0,0,0,.98) 92%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.98) 8%, rgba(0,0,0,.98) 92%, transparent 100%);
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      gap: 34px;
+      padding: 0;
+      animation: marqueeMove 22s linear infinite;
+      color: rgba(255,255,255,.72);
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: clamp(28px, 4vw, 56px);
+      white-space: nowrap;
+      text-shadow: 0 0 30px rgba(255,106,0,.12);
+    }
+
+    @keyframes marqueeMove {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    @keyframes marqueeMoveReverse {
+      from { transform: translateX(-50%); }
+      to { transform: translateX(0); }
+    }
+
+    .ticker-row {
+      position: absolute;
+      left: -20%;
+      width: 160%;
+      height: 74px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      transform: rotate(-7deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.015), transparent);
+    }
+
+    .ticker-row .marquee-track { align-items: center; }
+    .ticker-row.reverse .marquee-track { animation: marqueeMoveReverse 24s linear infinite; }
+
+    .ticker-row:nth-child(1) { top: 1%; }
+    .ticker-row:nth-child(2) { top: 11%; }
+    .ticker-row:nth-child(3) { top: 21%; }
+    .ticker-row:nth-child(4) { top: 31%; }
+    .ticker-row:nth-child(5) { top: 41%; }
+    .ticker-row:nth-child(6) { top: 51%; }
+    .ticker-row:nth-child(7) { top: 61%; }
+    .ticker-row:nth-child(8) { top: 71%; }
+    .ticker-row:nth-child(9) { top: 81%; }
+    .ticker-row:nth-child(10) { top: 91%; }
+
+    .section {
+      padding: 28px 0;
+      position: relative;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(28px, 3.8vw, 50px);
+      line-height: .98;
+      letter-spacing: -0.045em;
+      max-width: 12ch;
+      text-wrap: balance;
+    }
+
+    .section-head p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 640px;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mode-card {
+      min-height: 210px;
+      padding: 20px;
+      cursor: pointer;
+      transition: transform .28s ease, border-color .28s ease, box-shadow .28s ease, background .28s ease;
+      transform-style: preserve-3d;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    }
+
+    .mode-card:hover {
+      transform: translateY(-8px) rotateX(5deg) rotateY(-5deg);
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 24px 70px rgba(0,0,0,.38);
+    }
+
+    .mode-card.active {
+      border-color: rgba(255,140,72,.65);
+      background:
+        radial-gradient(circle at top right, rgba(255,106,0,.18), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.05));
+      transform: translateY(-6px) scale(1.015);
+      box-shadow: 0 28px 80px rgba(255,106,0,.20);
+    }
+
+    .mode-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--orange-2);
+      font-size: 28px;
+      margin-bottom: 20px;
+      transition: transform .35s ease, background .35s ease;
+    }
+
+    .mode-card.active .mode-icon,
+    .mode-card:hover .mode-icon {
+      transform: rotate(-6deg) scale(1.08);
+      background: rgba(255,106,0,.12);
+    }
+
+    .mode-tag {
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--orange-3);
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+
+    .mode-title {
+      margin: 0 0 10px;
+      font-size: 24px;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      text-wrap: balance;
+    }
+
+    .mode-desc { margin: 0; color: var(--muted); line-height: 1.7; font-size: 14px; text-wrap: pretty; }
+
+    .upload-shell {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 18px;
+    }
+
+    .upload-panel {
+      padding: 26px;
+      min-height: 440px;
+      background: var(--section-gradient);
+      transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+      isolation: isolate;
+    }
+
+    .upload-panel.dragover {
+      border-color: rgba(255,130,66,.7);
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 24px 90px rgba(255,106,0,.18);
+    }
+
+    .upload-visual {
+      position: relative;
+      min-height: 220px;
+      border-radius: 24px;
+      border: 1px dashed rgba(255,255,255,.16);
+      background:
+        radial-gradient(circle at center, rgba(255,106,0,.12), transparent 36%),
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .upload-rings,
+    .loading-rings {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+
+    .ring {
+      position: absolute;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      animation: ringPulse 4s ease-in-out infinite;
+    }
+
+    .ring:nth-child(1) { width: 110px; height: 110px; animation-delay: 0s; }
+    .ring:nth-child(2) { width: 170px; height: 170px; animation-delay: .8s; }
+    .ring:nth-child(3) { width: 240px; height: 240px; animation-delay: 1.4s; }
+
+    @keyframes ringPulse {
+      0% { transform: scale(.9); opacity: .22; }
+      50% { transform: scale(1.08); opacity: .55; }
+      100% { transform: scale(.92); opacity: .2; }
+    }
+
+    .upload-core {
+      position: relative;
+      width: 92px;
+      height: 92px;
+      border-radius: 28px;
+      display: grid;
+      place-items: center;
+      background: var(--accent-gradient);
+      color: #0a0a0d;
+      font-size: 40px;
+      box-shadow: 0 18px 44px rgba(255,106,0,.34);
+      animation: floatCore 3.6s ease-in-out infinite;
+    }
+
+    @keyframes floatCore {
+      0%,100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(6deg); }
+    }
+
+    .upload-title {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 2.8vw, 38px);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+      max-width: 15ch;
+      text-wrap: balance;
+    }
+
+    .upload-text { margin: 0 0 18px; color: var(--muted); line-height: 1.78; text-wrap: pretty; max-width: 64ch; }
+
+    .upload-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .tiny-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .upload-actions {
+      display: flex;
+      flex-wrap: wrap;
       gap: 12px;
       align-items: center;
+    }
+
+    input[type="file"] { display: none; }
+
+    .file-note {
       margin-top: 14px;
+      min-height: 22px;
       color: var(--muted);
       font-size: 13px;
     }
 
-    .file-dark {
-      width: 100%;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      border-radius: 16px;
-      padding: 14px 16px;
-      font-size: 14px;
+    .side-stack {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 16px;
+      min-height: 440px;
     }
 
-    .analyze-btn {
-      min-width: 180px;
-      border: none;
-      border-radius: 16px;
-      padding: 15px 18px;
-      font-size: 15px;
-      font-weight: 800;
-      color: white;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      cursor: pointer;
-      box-shadow: 0 16px 32px rgba(90, 66, 214, 0.34);
+    .status-tile,
+    .summary-card,
+    .timeline-card,
+    .transcript-card,
+    .insight-card,
+    .analysis-card,
+    .micro-card,
+    .cta-banner,
+    .footer-card,
+    .result-shell {
+      padding: 22px;
+      background: var(--section-gradient);
     }
 
     .status-line {
-      margin-top: 16px;
-      font-size: 14px;
-      color: #dbe5f1;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      margin-top: 12px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.05);
-    }
-
-    .result-shell {
-      display: grid;
-      gap: 16px;
-    }
-
-    .result-head {
-      display: grid;
-      grid-template-columns: 1fr 150px;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    .result-status-card,
-    .score-card,
-    .panel-card {
-      background: var(--panel-2);
-      border: 1px solid var(--stroke);
-      border-radius: 18px;
-      padding: 18px;
-      backdrop-filter: blur(8px);
-    }
-
-    .section-overline {
-      font-size: 11px;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      color: #98a8c0;
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
-    .result-status {
-      font-size: 34px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
-
-    .result-summary-line {
-      color: #d9e1ee;
-      line-height: 1.65;
-      font-size: 15px;
-    }
-
-    .score-card {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--orange);
+      box-shadow: 0 0 0 0 rgba(255,106,0,.45);
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0% { box-shadow: 0 0 0 0 rgba(255,106,0,.45); }
+      70% { box-shadow: 0 0 0 12px rgba(255,106,0,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,106,0,0); }
+    }
+
+    .score-shell {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .score-orbit {
+      position: relative;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at center, rgba(255,106,0,.12), rgba(255,255,255,.02));
+    }
+
+    .score-orbit::before,
+    .score-orbit::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      inset: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      animation: rotateSlow 16s linear infinite;
+    }
+
+    .score-orbit::after {
+      inset: 22px;
+      border-style: dashed;
+      animation-direction: reverse;
+      animation-duration: 12s;
+    }
+
+    @keyframes rotateSlow { to { transform: rotate(360deg); } }
+
+    .score-circle {
+      --progress: 61;
+      width: 136px;
+      height: 136px;
+      border-radius: 50%;
+      background: conic-gradient(var(--orange) calc(var(--progress) * 1%), rgba(255,255,255,.08) 0);
+      display: grid;
+      place-items: center;
+      position: relative;
+      animation: scoreIntro 1.4s cubic-bezier(.2,.7,.2,1);
+    }
+
+    @keyframes scoreIntro {
+      from { transform: scale(.8) rotate(-90deg); opacity: 0; }
+      to { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    .score-circle::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      background: rgba(10,10,13,.96);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .score-content {
+      position: relative;
+      z-index: 1;
       text-align: center;
-      background: linear-gradient(180deg, rgba(124,92,255,0.18), rgba(124,92,255,0.08));
     }
 
-    .score-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #c8bcff;
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-
-    .score-value {
-      font-size: 42px;
-      font-weight: 900;
+    .score-content strong {
+      display: block;
+      font-size: 40px;
+      letter-spacing: -0.06em;
       line-height: 1;
     }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .panel-card h3 {
-      font-size: 15px;
-      margin-bottom: 10px;
-      font-weight: 800;
-    }
-
-    .panel-card p {
-      color: #dce6f5;
-      line-height: 1.65;
-      font-size: 14px;
-      white-space: pre-wrap;
-    }
-
-    .panel-card.large p {
-      min-height: 72px;
-    }
-
-    .panel-card.full {
-      grid-column: 1 / -1;
-    }
-
-    .list-wrap {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .list-card {
-      background: var(--panel-2);
-      border: 1px solid var(--stroke);
-      border-radius: 18px;
-      padding: 18px;
-      backdrop-filter: blur(8px);
-    }
-
-    .list-card h3 {
-      font-size: 15px;
-      margin-bottom: 12px;
-      font-weight: 800;
-    }
-
-    .list-card ul {
-      margin: 0;
-      padding-left: 18px;
-      color: #e5ecf7;
-    }
-
-    .list-card li {
-      margin-bottom: 8px;
-      line-height: 1.55;
-      font-size: 14px;
-    }
-
-    .positive h3 { color: var(--success); }
-    .negative h3 { color: var(--danger); }
-    .warning h3 { color: var(--warning); }
-
-    .empty {
+    .score-content span {
+      font-size: 11px;
       color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .score-summary h3 {
+      margin: 0 0 10px;
+      font-size: clamp(24px, 3.2vw, 40px);
+      line-height: .98;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+      max-width: 13ch;
+    }
+
+    .score-summary p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .status-badge {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+
+    .status-approved { color: #c7ffd8; border-color: rgba(93,255,155,.24); background: rgba(93,255,155,.08); }
+    .status-adjust { color: #ffe3c4; border-color: rgba(255,140,72,.26); background: rgba(255,140,72,.09); }
+    .status-rejected { color: #ffd3d8; border-color: rgba(255,110,125,.26); background: rgba(255,110,125,.09); }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      transition: transform .25s ease, border-color .25s ease, background .25s ease;
+    }
+
+    .timeline-item.active {
+      transform: translateX(8px);
+      border-color: rgba(255,140,72,.34);
+      background: rgba(255,140,72,.08);
+    }
+
+    .timeline-item.done {
+      border-color: rgba(93,255,155,.20);
+      background: rgba(93,255,155,.06);
+    }
+
+    .timeline-icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      font-size: 22px;
+    }
+
+    .timeline-title { font-weight: 800; letter-spacing: -0.02em; }
+    .timeline-desc { color: var(--muted); font-size: 13px; margin-top: 5px; }
+    .timeline-state { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+    .result-section {
+      display: none;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+
+    .result-section.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .result-shell {
+      min-height: 320px;
+      background:
+        radial-gradient(circle at 80% 18%, rgba(255,106,0,.15), transparent 23%),
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+    }
+
+    .summary-card {
+      display: grid;
+      gap: 16px;
+      min-height: 320px;
+      align-content: start;
+    }
+
+    .summary-card h3,
+    .timeline-card h3,
+    .transcript-card h3,
+    .analysis-card h3,
+    .insight-card h3,
+    .cta-banner h3,
+    .footer-card h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      color: var(--orange-3);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-weight: 800;
+    }
+
+    .headline-xl {
+      margin: 0;
+      font-size: clamp(28px, 3.5vw, 48px);
+      line-height: 1;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+      max-width: 13ch;
+    }
+
+    .copy-lg {
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: 15px;
+      text-wrap: pretty;
+      max-width: 66ch;
+    }
+
+    .micro-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .micro-card {
+      min-height: 150px;
+      transition: transform .28s ease, border-color .28s ease;
+    }
+
+    .micro-card:hover { transform: translateY(-8px); border-color: rgba(255,255,255,.18); }
+
+    .micro-card .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .micro-card .value { margin-top: 14px; font-size: clamp(30px, 5vw, 58px); font-weight: 900; letter-spacing: -0.06em; line-height: 1; }
+    .micro-card .hint { margin-top: 10px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .analysis-card {
+      min-height: 460px;
+      transition: transform .28s ease, border-color .28s ease, box-shadow .28s ease;
+      overflow: hidden;
+    }
+
+    .analysis-card:hover {
+      transform: translateY(-8px) rotateX(4deg) rotateY(-3deg);
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 24px 80px rgba(0,0,0,.36);
+    }
+
+    .analysis-tone {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      right: -40px;
+      top: -40px;
+      border-radius: 999px;
+      filter: blur(40px);
+      opacity: .25;
+    }
+
+    .analysis-card.commercial .analysis-tone { background: rgba(255,106,0,.8); }
+    .analysis-card.institutional .analysis-tone { background: rgba(106,184,255,.8); }
+    .analysis-card.social .analysis-tone { background: rgba(93,255,155,.8); }
+
+    .analysis-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .analysis-name {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      text-wrap: balance;
+    }
+
+    .analysis-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 64px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #0a0a0d;
+      background: #fff;
+    }
+
+    .analysis-card.commercial .analysis-chip { background: linear-gradient(135deg, #ff6a00, #ffb071); }
+    .analysis-card.institutional .analysis-chip { background: linear-gradient(135deg, #6ab8ff, #b4d8ff); }
+    .analysis-card.social .analysis-chip { background: linear-gradient(135deg, #5dff9b, #c8ffdd); }
+
+    .analysis-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.82);
+      margin-bottom: 16px;
+    }
+
+    .list-title {
+      margin: 18px 0 10px;
+      color: rgba(255,255,255,.88);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-weight: 800;
+    }
+
+    .rich-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rich-list li {
+      position: relative;
+      padding: 12px 14px 12px 36px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.05);
+      color: rgba(255,255,255,.76);
+      line-height: 1.55;
+      overflow: hidden;
+    }
+
+    .rich-list li::before {
+      content: "";
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      left: 15px;
+      top: 18px;
+      background: var(--orange);
+      box-shadow: 0 0 0 6px rgba(255,106,0,.12);
+    }
+
+    .rich-list.positive li::before { background: var(--green); box-shadow: 0 0 0 6px rgba(93,255,155,.12); }
+    .rich-list.negative li::before { background: var(--red); box-shadow: 0 0 0 6px rgba(255,110,125,.12); }
+    .rich-list.visual li::before { background: var(--blue); box-shadow: 0 0 0 6px rgba(106,184,255,.12); }
+
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .insight-card p,
+    .transcript-card p { margin: 0; color: var(--muted); line-height: 1.8; }
+
+    .insight-card .big {
+      margin: 0;
+      font-size: clamp(24px, 3.2vw, 42px);
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+      text-wrap: balance;
+      max-width: 14ch;
+    }
+
+    .transcript-toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .code-scroll {
+      max-height: 380px;
+      overflow: auto;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(0,0,0,.22);
+      padding: 18px;
+      color: rgba(255,255,255,.82);
+      line-height: 1.78;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
       font-size: 14px;
     }
 
-    .success-text { color: var(--success); }
-    .warning-text { color: var(--warning); }
-    .danger-text { color: var(--danger); }
-
-    .loading {
-      opacity: 0.7;
-      pointer-events: none;
+    .cta-banner {
+      min-height: 220px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      background:
+        radial-gradient(circle at 75% 18%, rgba(255,106,0,.18), transparent 22%),
+        linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      margin-bottom: 18px;
     }
+
+    .cta-banner .headline-xl { max-width: 15ch; }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+    }
+
+    .footer-card {
+      min-height: 220px;
+      display: grid;
+      align-content: start;
+      gap: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .text-gradient {
+      background: linear-gradient(180deg, #fff 0%, #ffd8bf 55%, #ff934d 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(5,5,7,.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 24px;
+    }
+
+    .loading-overlay.show { display: flex; }
+
+    .loading-panel {
+      width: min(880px, 100%);
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at top right, rgba(255,106,0,.16), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 24px 100px rgba(0,0,0,.48);
+      overflow: hidden;
+      position: relative;
+      padding: 28px;
+    }
+
+    .loading-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .loading-title {
+      margin: 0;
+      font-size: clamp(34px, 4vw, 62px);
+      line-height: .92;
+      letter-spacing: -0.06em;
+      max-width: 560px;
+    }
+
+    .loading-subtitle { color: var(--muted); line-height: 1.7; margin: 8px 0 0; }
+
+    .loading-spinner {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+
+    .spinner-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: rgba(255,255,255,.85);
+      border-right-color: rgba(255,106,0,.85);
+      animation: spinClock 1.8s linear infinite;
+    }
+
+    .spinner-ring:nth-child(2) {
+      inset: 18px;
+      border-top-color: rgba(255,255,255,.28);
+      border-right-color: rgba(255,160,90,.85);
+      animation-duration: 1.2s;
+      animation-direction: reverse;
+    }
+
+    .spinner-ring:nth-child(3) {
+      inset: 38px;
+      border-top-color: rgba(255,255,255,.28);
+      border-right-color: rgba(255,255,255,.95);
+      animation-duration: .95s;
+    }
+
+    @keyframes spinClock { to { transform: rotate(360deg); } }
+
+    .spinner-core {
+      position: absolute;
+      inset: 50px;
+      border-radius: 22px;
+      background: var(--accent-gradient);
+      display: grid;
+      place-items: center;
+      color: #0b0b0d;
+      font-size: 26px;
+      font-weight: 900;
+      box-shadow: 0 18px 36px rgba(255,106,0,.28);
+      animation: coreMorph 2.4s ease-in-out infinite;
+    }
+
+    @keyframes coreMorph {
+      0%,100% { transform: rotate(0deg) scale(1); border-radius: 22px; }
+      50% { transform: rotate(12deg) scale(1.08); border-radius: 30px; }
+    }
+
+    .progress-track {
+      position: relative;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.08);
+      margin: 20px 0 12px;
+    }
+
+    .progress-bar {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 8%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ff6a00, #ff9e5b, #fff1e1);
+      box-shadow: 0 0 24px rgba(255,106,0,.4);
+      transition: width .65s cubic-bezier(.2,.7,.2,1);
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    .loading-stages {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .loading-stage {
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      transition: transform .22s ease, border-color .22s ease, background .22s ease;
+    }
+
+    .loading-stage.active {
+      transform: translateY(-4px);
+      border-color: rgba(255,140,72,.34);
+      background: rgba(255,140,72,.08);
+    }
+
+    .loading-stage.done {
+      border-color: rgba(93,255,155,.22);
+      background: rgba(93,255,155,.07);
+    }
+
+    .loading-stage .num { color: var(--orange-3); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; font-weight: 800; }
+    .loading-stage .ttl { margin: 8px 0 4px; font-weight: 800; letter-spacing: -0.02em; }
+    .loading-stage .txt { color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+    .error-banner {
+      display: none;
+      margin-bottom: 18px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,110,125,.22);
+      background: rgba(255,110,125,.08);
+      color: #ffd7dc;
+      line-height: 1.7;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px) scale(.985);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+
+    .reveal.in {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .tilt {
+      transform-style: preserve-3d;
+      transition: transform .18s ease, box-shadow .25s ease;
+      will-change: transform;
+    }
+
+    .floaty {
+      animation: floaty 6.4s ease-in-out infinite;
+    }
+
+    @keyframes floaty {
+      0%,100% { transform: translateY(0px); }
+      50% { transform: translateY(-7px); }
+    }
+
+    .muted { color: var(--muted); }
+    .hidden { display: none !important; }
 
     @media (max-width: 1180px) {
-      .shell {
-        grid-template-columns: 1fr;
+      .hero-grid,
+      .upload-shell,
+      .result-grid,
+      .footer-grid,
+      .split-grid { grid-template-columns: 1fr; }
+      .mode-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cards-grid,
+      .micro-grid { grid-template-columns: 1fr; }
+      .hero-main,
+      .hero-side { min-height: auto; }
+      .hero-copy,
+      .hero-stats { max-width: 100%; padding-right: 0; }
+      .hero-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hero-main::before {
+        width: 42%;
+        right: 0;
+        top: 4%;
+        opacity: .42;
       }
-
-      .left {
-        order: 2;
-      }
-
-      .right {
-        order: 1;
-        min-height: 560px;
-      }
-
-      .entry-title {
-        font-size: 38px;
-      }
+      .score-shell { grid-template-columns: 1fr; justify-items: start; }
+      .loading-stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .headline-xl,
+      .section-head h2,
+      .insight-card .big,
+      .score-summary h3,
+      .hero-side-title,
+      .upload-title,
+      .hero-title { max-width: 100%; }
     }
 
     @media (max-width: 760px) {
-      body {
-        padding: 12px;
+      .container { width: min(calc(100% - 22px), var(--max-width)); }
+      .topbar-inner { padding: 12px; border-radius: 18px; }
+      .nav-actions { display: none; }
+      .hero { padding-top: 24px; }
+      .hero-main,
+      .hero-side,
+      .upload-panel,
+      .status-tile,
+      .summary-card,
+      .analysis-card,
+      .micro-card,
+      .timeline-card,
+      .transcript-card,
+      .cta-banner,
+      .footer-card,
+      .result-shell { border-radius: 24px; padding: 18px; }
+      .hero-title {
+        font-size: clamp(38px, 12vw, 62px);
+        line-height: .98;
       }
-
-      .shell {
-        border-radius: 22px;
+      .hero-side-title,
+      .headline-xl,
+      .upload-title,
+      .insight-card .big,
+      .section-head h2,
+      .score-summary h3 { font-size: clamp(24px, 7vw, 36px); }
+      .mode-grid { grid-template-columns: 1fr; }
+      .hero-stats { grid-template-columns: 1fr; }
+      .cta-banner { grid-template-columns: 1fr; }
+      .score-orbit { width: 150px; height: 150px; }
+      .score-circle { width: 122px; height: 122px; }
+      .loading-panel { padding: 20px; border-radius: 24px; }
+      .loading-header { flex-direction: column; align-items: start; }
+      .loading-stages { grid-template-columns: 1fr; }
+      .section-head { flex-direction: column; align-items: start; }
+      .hero-main::before {
+        position: absolute;
+        width: 74%;
+        right: -12%;
+        top: 2%;
+        opacity: .20;
       }
-
-      .left, .right {
-        padding: 22px 18px;
+      .hero-copy,
+      .hero-stats,
+      .copy-lg,
+      .upload-text,
+      .hero-subtitle { max-width: 100%; }
+      .ticker-row {
+        left: -35%;
+        width: 190%;
+        height: 62px;
       }
-
-      .upload-grid,
-      .result-head,
-      .grid-2,
-      .list-wrap {
-        grid-template-columns: 1fr;
+      .marquee-track {
+        font-size: clamp(20px, 7vw, 34px);
+        gap: 22px;
       }
-
-      .topbar,
-      .entry-actions,
-      .upload-info {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .entry-title {
-        font-size: 32px;
+      .hero-side-copy {
+        padding: 26px 10px 8px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="shell">
-    <aside class="left">
-      <div class="eyebrow">Acesso inteligente ao sistema</div>
-      <div class="title">Bem-vindos ao<br>Marketing Evaluator</div>
-      <div class="subtitle">
-        Preencha sua identificação para acessar o ambiente de trabalho.
-      </div>
+  <canvas id="gridCanvas"></canvas>
+  <canvas id="particleCanvas"></canvas>
+  <div class="noise"></div>
 
-      <div class="pills">
-        <span class="pill">Marketing</span>
-        <span class="pill">Avaliação</span>
-        <span class="pill">Identificação</span>
-        <span class="pill">Acesso</span>
-      </div>
-
-      <div id="entrySideInfo">
-        <div class="helper-box">
-          O acesso ao ambiente principal só é liberado após a etapa de entrada e identificação.
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-panel tilt">
+      <div class="loading-header">
+        <div>
+          <div class="eyebrow">Processamento ao vivo</div>
+          <h2 class="loading-title">Seu criativo está sendo lido por múltiplas camadas de IA.</h2>
+          <p class="loading-subtitle" id="loadingStatusText">Preparando upload seguro e iniciando fluxo de análise.</p>
         </div>
-        <div class="small-note">
-          Fluxo obrigatório: entrada → identificação → painel de análise.
+        <div class="loading-spinner">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-core">AI</div>
         </div>
       </div>
-
-      <div id="loginBox" class="hidden">
-        <div class="field">
-          <label class="label" for="email">E-mail</label>
-          <input class="input" id="email" placeholder="admin@admin.com" />
+      <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="progress-meta">
+        <span id="progressLabel">Preparando...</span>
+        <strong id="progressPercent">08%</strong>
+      </div>
+      <div class="loading-stages" id="loadingStages">
+        <div class="loading-stage active">
+          <div class="num">01</div>
+          <div class="ttl">Upload</div>
+          <div class="txt">Recebendo arquivo e validando formato do vídeo.</div>
         </div>
-
-        <div class="field">
-          <label class="label" for="password">Senha</label>
-          <input class="input" id="password" type="password" placeholder="••••••" />
+        <div class="loading-stage">
+          <div class="num">02</div>
+          <div class="ttl">Transcrição</div>
+          <div class="txt">Extraindo texto com foco em máxima fidelidade do áudio.</div>
         </div>
-
-        <div class="field">
-          <label class="label" for="accessingAs">Quem está acessando</label>
-          <select class="select" id="accessingAs">
-            <option>Social Media</option>
-            <option>Gestor</option>
-            <option>Comercial</option>
-            <option>Analista</option>
-          </select>
+        <div class="loading-stage">
+          <div class="num">03</div>
+          <div class="ttl">Leitura visual</div>
+          <div class="txt">Analisando frames, enquadramento, clareza e composição.</div>
         </div>
-
-        <button class="primary-btn" onclick="login()">✦&nbsp;&nbsp;Validando acesso</button>
-        <button class="secondary-btn" onclick="backToEntry()">Voltar para entrada</button>
-
-        <div id="loginStatus" class="helper-box hidden"></div>
-
-        <div class="small-note">
-          Após a identificação, o sistema abrirá automaticamente o ambiente principal.
+        <div class="loading-stage">
+          <div class="num">04</div>
+          <div class="ttl">Estratégia</div>
+          <div class="txt">Gerando diagnóstico comercial, institucional e de prova social.</div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div id="appInfoBox" class="hidden">
-        <div class="helper-box">
-          Acesso confirmado. Ambiente principal liberado.
-        </div>
-        <div class="small-note">
-          Sessão ativa no navegador atual.
+  <div class="page">
+    <header class="topbar">
+      <div class="container">
+        <div class="topbar-inner">
+          <div class="brand">
+            <div class="brand-badge">▶</div>
+            <div class="brand-text">
+              <h1>Marketing Evaluator</h1>
+              <p>Video Analyzer premium experience</p>
+            </div>
+          </div>
+          <div class="nav-actions">
+            <a class="ghost-pill" href="#modes">Modos</a>
+            <a class="ghost-pill" href="#upload">Upload</a>
+            <a class="ghost-pill" href="#results">Resultados</a>
+            <button class="btn" id="topAnalyzeBtn">Começar análise</button>
+          </div>
         </div>
       </div>
-    </aside>
+    </header>
 
-    <main class="right">
-      <video class="right-video" autoplay muted loop playsinline poster="">
-        <source src="/portal/video.mp4" type="video/mp4" />
-      </video>
-      <div class="right-overlay"></div>
-
-      <div class="right-content">
-        <section id="entryScreen" class="entry-stage">
-          <div class="entry-kicker">acompanhamento inteligente</div>
-          <div class="entry-title">Tela de entrada<br>obrigatória</div>
-          <div class="entry-desc">
-            Antes de acessar o painel, o usuário precisa passar pela etapa inicial do portal. Só depois disso a identificação é exibida e o ambiente principal pode ser liberado.
-          </div>
-
-          <div class="entry-points">
-            <div class="entry-point">
-              <strong>Etapa 1 — Entrada</strong>
-              <span>Confirma o início do acesso ao sistema e organiza o fluxo correto do portal.</span>
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <article class="hero-main tilt reveal">
+            <div class="floating-orbs">
+              <div class="orb orange" style="width:180px;height:180px;left:8%;top:10%;animation-duration:8s"></div>
+              <div class="orb white" style="width:120px;height:120px;right:16%;top:12%;animation-duration:7s"></div>
+              <div class="orb orange" style="width:90px;height:90px;left:32%;bottom:18%;animation-duration:6s"></div>
             </div>
-            <div class="entry-point">
-              <strong>Etapa 2 — Identificação</strong>
-              <span>Valida credenciais e perfil de acesso antes de abrir o painel de análise.</span>
-            </div>
-            <div class="entry-point">
-              <strong>Etapa 3 — Painel</strong>
-              <span>Libera upload, transcrição, score, legenda e recomendações com IA.</span>
-            </div>
-          </div>
 
-          <div class="entry-actions">
-            <button class="entry-btn" onclick="goToLogin()">Entrar no portal</button>
-            <button class="entry-btn secondary" onclick="clearSessionAndReload()">Limpar sessão</button>
-          </div>
-        </section>
-
-        <section id="loginHero" class="hero hidden">
-          <div class="hero-title">Identificação<br>obrigatória</div>
-          <div class="hero-text">
-            Para a segurança do sistema, precisamos confirmar o perfil de quem está acessando.
-          </div>
-
-          <div class="hero-grid">
-            <div class="hero-card">
-              <h4>Fluxo atual</h4>
-              <p>Portal → login → análise de vídeo. Assim que o acesso for validado, o sistema abre a página principal.</p>
+            <div class="hero-copy">
+              <div class="eyebrow">Análise de criativos com IA em tempo real</div>
+              <h2 class="hero-title">
+                Faça seu vídeo parecer<br />
+                tão forte quanto ele<br />
+                <span class="accent">merece performar.</span>
+              </h2>
+              <p class="hero-subtitle">
+                Uma experiência única, cinemática e interativa para subir vídeos, escolher o foco da avaliação e receber um diagnóstico visual, comercial, institucional e de prova social conectado ao seu backend real.
+              </p>
+              <div class="hero-actions">
+                <button class="btn" id="heroScrollUpload">Enviar vídeo agora</button>
+                <button class="btn secondary" id="heroScrollResults">Ver estrutura do resultado</button>
+              </div>
             </div>
-            <div class="hero-card">
-              <h4>Acesso online</h4>
-              <p>Esta versão já está preparada para uso online com transcrição, análise comercial e recomendações automáticas.</p>
-            </div>
-          </div>
-        </section>
 
-        <section id="app" class="hidden">
-          <div class="topbar">
+            <div class="hero-stats">
+              <div class="metric-card tilt floaty" style="animation-delay:-.6s;">
+                <div class="metric-label">Entrada</div>
+                <div class="metric-value">/analyze</div>
+                <div class="metric-foot">Upload real com <strong>video</strong> + <strong>mode</strong>.</div>
+              </div>
+              <div class="metric-card tilt floaty" style="animation-delay:-1.2s;">
+                <div class="metric-label">Pipeline</div>
+                <div class="metric-value">4 camadas</div>
+                <div class="metric-foot">Upload, transcrição, visual e estratégia.</div>
+              </div>
+              <div class="metric-card tilt floaty" style="animation-delay:-1.8s;">
+                <div class="metric-label">Saída</div>
+                <div class="metric-value">JSON rico</div>
+                <div class="metric-foot">Score, status, insights, visual e transcrição.</div>
+              </div>
+            </div>
+          </article>
+
+          <aside class="hero-side tilt reveal">
+            <div class="marquee" aria-hidden="true">
+              <div class="ticker-row">
+                <div class="marquee-track">
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                </div>
+              </div>
+              <div class="ticker-row reverse">
+                <div class="marquee-track" style="animation-duration:24s; opacity:.85;">
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                </div>
+              </div>
+              <div class="ticker-row">
+                <div class="marquee-track" style="animation-duration:28s; opacity:.78;">
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                </div>
+              </div>
+              <div class="ticker-row reverse">
+                <div class="marquee-track" style="animation-duration:31s; opacity:.74;">
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                </div>
+              </div>
+              <div class="ticker-row">
+                <div class="marquee-track" style="animation-duration:27s; opacity:.70;">
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                </div>
+              </div>
+              <div class="ticker-row reverse">
+                <div class="marquee-track" style="animation-duration:33s; opacity:.66;">
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                </div>
+              </div>
+              <div class="ticker-row">
+                <div class="marquee-track" style="animation-duration:26s; opacity:.62;">
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                </div>
+              </div>
+              <div class="ticker-row reverse">
+                <div class="marquee-track" style="animation-duration:35s; opacity:.58;">
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                </div>
+              </div>
+              <div class="ticker-row">
+                <div class="marquee-track" style="animation-duration:29s; opacity:.54;">
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                </div>
+              </div>
+              <div class="ticker-row reverse">
+                <div class="marquee-track" style="animation-duration:37s; opacity:.48;">
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                  <span>MARKETING</span><span>•</span><span>VENDAS</span><span>•</span><span>SOCIAL MEDIA</span><span>•</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="hero-side-copy">
+              <div class="eyebrow">Premium cinematic interface</div>
+              <h3 class="hero-side-title">Uma landing viva, reativa e pronta para exibir o poder da sua análise.</h3>
+              <p class="hero-side-text">
+                Fundo interativo, luzes que seguem o mouse, partículas, cards com profundidade, transições de estado e uma área de resultado desenhada para transformar dados técnicos em percepção de produto premium.
+              </p>
+              <div class="hero-actions">
+                <a class="btn secondary" href="#modes">Escolher modo</a>
+                <a class="btn secondary" href="#upload">Ir ao upload</a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="modes">
+        <div class="container">
+          <div class="section-head reveal">
             <div>
-              <h2>Painel de análise de criativos</h2>
-              <p>Envie um vídeo e receba score, resumo, transcrição, legenda e recomendações de marketing.</p>
+              <div class="eyebrow">Escolha estratégica</div>
+              <h2>Selecione o foco da avaliação.</h2>
             </div>
-            <button class="logout-btn" onclick="logout()">Sair</button>
+            <p>
+              Cada modo altera a prioridade da análise enviada ao servidor. O layout responde instantaneamente com microanimações, destaque visual do card ativo e uma narrativa clara de decisão.
+            </p>
           </div>
 
-          <section class="upload-card" id="uploadCard">
-            <div class="section-overline">Nova análise</div>
-            <h3>Enviar vídeo para avaliação</h3>
-            <div class="upload-grid">
-              <input class="file-dark" type="file" id="file" accept="video/*,audio/*" />
-              <button class="analyze-btn" id="analyzeBtn" onclick="send()">Analisar agora</button>
-            </div>
-            <div class="upload-info">
-              <span id="fileNameInfo">Nenhum arquivo selecionado.</span>
-              <span>Upload local → transcrição → IA → diagnóstico final</span>
-            </div>
-            <div class="status-line" id="status">Aguardando envio...</div>
-            <div class="status-badge" id="statusBadge">Sistema pronto</div>
-          </section>
+          <div class="mode-grid">
+            <article class="mode-card tilt reveal active" data-mode="completo">
+              <div class="mode-icon">✦</div>
+              <div class="mode-tag">Modo integrado</div>
+              <h3 class="mode-title">Completo</h3>
+              <p class="mode-desc">Combina vendas, marca e prova social em uma visão total do criativo.</p>
+            </article>
+            <article class="mode-card tilt reveal" data-mode="comercial">
+              <div class="mode-icon">↗</div>
+              <div class="mode-tag">Conversão</div>
+              <h3 class="mode-title">Comercial</h3>
+              <p class="mode-desc">Foco máximo em gancho, oferta, persuasão, desejo e CTA.</p>
+            </article>
+            <article class="mode-card tilt reveal" data-mode="institucional">
+              <div class="mode-icon">◉</div>
+              <div class="mode-tag">Percepção</div>
+              <h3 class="mode-title">Institucional</h3>
+              <p class="mode-desc">Prioriza marca, narrativa, autoridade, clareza e conexão emocional.</p>
+            </article>
+            <article class="mode-card tilt reveal" data-mode="prova_social">
+              <div class="mode-icon">✓</div>
+              <div class="mode-tag">Credibilidade</div>
+              <h3 class="mode-title">Prova social</h3>
+              <p class="mode-desc">Analisa confiança, validação real, autenticidade e força da prova.</p>
+            </article>
+          </div>
+        </div>
+      </section>
 
-          <section class="result-shell hidden" id="result">
-            <div class="result-head">
-              <div class="result-status-card">
-                <div class="section-overline">Status da análise</div>
-                <div class="result-status" id="statusLabel">—</div>
-                <div class="result-summary-line" id="summary">Aguardando análise...</div>
-              </div>
-              <div class="score-card">
-                <div class="score-label">Score final</div>
-                <div class="score-value" id="score">0</div>
-              </div>
+      <section class="section" id="upload">
+        <div class="container">
+          <div class="section-head reveal">
+            <div>
+              <div class="eyebrow">Entrada do vídeo</div>
+              <h2>Arraste, solte, selecione e dispare a experiência.</h2>
             </div>
+            <p>
+              Este bloco já está conectado ao seu <strong>/analyze</strong>. O envio usa <strong>video</strong> no arquivo e <strong>mode</strong> no corpo da requisição, exatamente como o seu <strong>server.js</strong> espera.
+            </p>
+          </div>
 
-            <div class="grid-2">
-              <div class="panel-card">
-                <h3>Análise do roteiro</h3>
-                <p id="scriptAnalysis">—</p>
+          <div class="error-banner" id="errorBanner"></div>
+
+          <div class="upload-shell">
+            <article class="upload-panel tilt reveal" id="dropZone">
+              <div class="upload-visual">
+                <div class="upload-rings">
+                  <div class="ring"></div>
+                  <div class="ring"></div>
+                  <div class="ring"></div>
+                </div>
+                <div class="upload-core">↑</div>
               </div>
-              <div class="panel-card">
-                <h3>Legenda para Instagram</h3>
-                <p id="instagramCaption">—</p>
+
+              <h3 class="upload-title">Suba seu vídeo e ative o diagnóstico completo.</h3>
+              <p class="upload-text">
+                Compatível com MP4, MOV, AVI, MKV, WebM, MP3, WAV, M4A, OGG e FLAC, respeitando a estrutura suportada pelo servidor. O card reage ao mouse e ao drag do arquivo para reforçar o efeito premium.
+              </p>
+
+              <div class="upload-meta">
+                <span class="tiny-chip">Campo do arquivo: <strong>video</strong></span>
+                <span class="tiny-chip">Modo atual: <strong id="selectedModeLabel">Completo</strong></span>
+                <span class="tiny-chip">Limite do backend: <strong>300MB</strong></span>
               </div>
-              <div class="panel-card full large">
+
+              <div class="upload-actions">
+                <label class="btn" for="videoInput">Escolher arquivo</label>
+                <button class="btn secondary" id="analyzeBtn">Analisar agora</button>
+                <span class="muted">ou solte o arquivo diretamente nesta área</span>
+              </div>
+
+              <input id="videoInput" type="file" accept="video/*,audio/*,.mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.m4a,.ogg,.flac,.mpeg,.mpga" />
+              <div class="file-note" id="fileNote">Nenhum arquivo selecionado ainda.</div>
+            </article>
+
+            <aside class="side-stack">
+              <article class="status-tile tilt reveal">
+                <div class="status-line"><span class="pulse-dot"></span> Estado atual da experiência</div>
+                <div class="score-shell">
+                  <div class="score-orbit">
+                    <div class="score-circle" id="previewScoreCircle" style="--progress: 61;">
+                      <div class="score-content">
+                        <strong id="previewScore">61</strong>
+                        <span>Prévia</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="score-summary">
+                    <h3 id="previewHeadline">Pronto para receber um novo criativo.</h3>
+                    <p id="previewText">Escolha o modo, envie um vídeo e acompanhe um fluxo animado que representa o pipeline real do seu backend.</p>
+                    <div class="status-badge status-adjust" id="previewStatusBadge">Aguardando arquivo</div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="timeline-card tilt reveal">
+                <h3>Pipeline do servidor</h3>
+                <div class="timeline" id="pipelineTimeline">
+                  <div class="timeline-item active">
+                    <div class="timeline-icon">↑</div>
+                    <div>
+                      <div class="timeline-title">Recebimento do vídeo</div>
+                      <div class="timeline-desc">Upload single file via multer no campo <strong>video</strong>.</div>
+                    </div>
+                    <div class="timeline-state">Ready</div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-icon">✎</div>
+                    <div>
+                      <div class="timeline-title">Transcrição precisa</div>
+                      <div class="timeline-desc">Leitura do áudio usando modelo de transcrição.</div>
+                    </div>
+                    <div class="timeline-state">Idle</div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-icon">◌</div>
+                    <div>
+                      <div class="timeline-title">Leitura visual por frames</div>
+                      <div class="timeline-desc">Extração de frames com ffmpeg e análise visual com IA.</div>
+                    </div>
+                    <div class="timeline-state">Idle</div>
+                  </div>
+                  <div class="timeline-item">
+                    <div class="timeline-icon">✦</div>
+                    <div>
+                      <div class="timeline-title">Diagnóstico estratégico</div>
+                      <div class="timeline-desc">Consolidação final com score, status e insights detalhados.</div>
+                    </div>
+                    <div class="timeline-state">Idle</div>
+                  </div>
+                </div>
+              </article>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="section result-section" id="results">
+        <div class="container">
+          <div class="section-head reveal">
+            <div>
+              <div class="eyebrow">Resultado dinâmico</div>
+              <h2>Seu painel vivo de leitura estratégica.</h2>
+            </div>
+            <p>
+              Quando a resposta chega do servidor, toda a página se transforma: score, status, resumo, avaliações por bloco, leitura visual, transcrição completa e texto consolidado para uso imediato.
+            </p>
+          </div>
+
+          <div class="result-grid">
+            <article class="result-shell tilt reveal">
+              <div class="status-line"><span class="pulse-dot"></span> Diagnóstico consolidado</div>
+              <div class="score-shell">
+                <div class="score-orbit">
+                  <div class="score-circle" id="resultScoreCircle" style="--progress: 0;">
+                    <div class="score-content">
+                      <strong id="resultScore">--</strong>
+                      <span>Score</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="score-summary">
+                  <h3 id="resultHeadline">Aguardando sua primeira análise real.</h3>
+                  <p id="resultSummary">Assim que o servidor responder, este bloco recebe o score, status e resumo principal do vídeo analisado.</p>
+                  <div class="status-badge status-adjust" id="resultStatusBadge">Sem resultado ainda</div>
+                </div>
+              </div>
+            </article>
+
+            <article class="summary-card tilt reveal">
+              <h3>Resumo executivo</h3>
+              <p class="headline-xl" id="executiveTitle">Visual premium. Resposta orientada por IA. UX feita para impressionar.</p>
+              <p class="copy-lg" id="executiveCopy">
+                Este espaço recebe o resumo do backend e traduz a leitura geral do criativo em uma mensagem clara, elegante e imediatamente utilizável.
+              </p>
+              <div class="upload-meta">
+                <span class="tiny-chip">Modo selecionado: <strong id="resultModeLabel">—</strong></span>
+                <span class="tiny-chip">Resultado: <strong id="resultOutcomeText">—</strong></span>
+              </div>
+              <div class="hero-actions">
+                <button class="btn secondary" id="copyScriptBtn">Copiar análise</button>
+                <button class="btn secondary" id="scrollTranscriptBtn">Ver transcrição</button>
+              </div>
+            </article>
+          </div>
+
+          <div class="micro-grid">
+            <article class="micro-card tilt reveal">
+              <div class="label">Leitura visual</div>
+              <div class="value" id="visualCountValue">00</div>
+              <div class="hint">Observações visuais detectadas a partir dos frames enviados à IA.</div>
+            </article>
+            <article class="micro-card tilt reveal">
+              <div class="label">Pontos positivos</div>
+              <div class="value" id="positiveCountValue">00</div>
+              <div class="hint">Itens estratégicos aproveitáveis para fortalecer a peça imediatamente.</div>
+            </article>
+            <article class="micro-card tilt reveal">
+              <div class="label">Pontos de ajuste</div>
+              <div class="value" id="negativeCountValue">00</div>
+              <div class="hint">Falhas percebidas na performance, percepção ou credibilidade do vídeo.</div>
+            </article>
+          </div>
+
+          <div class="cards-grid">
+            <article class="analysis-card commercial tilt reveal" id="commercialCard">
+              <div class="analysis-tone"></div>
+              <div class="analysis-top">
+                <div>
+                  <h3>Diagnóstico</h3>
+                  <p class="analysis-name">Comercial</p>
+                </div>
+                <div class="analysis-chip" id="commercialScore">--</div>
+              </div>
+              <div class="analysis-status" id="commercialStatus">Sem análise</div>
+              <div class="list-title">Pontos positivos</div>
+              <ul class="rich-list positive" id="commercialPositives"></ul>
+              <div class="list-title">Pontos de melhoria</div>
+              <ul class="rich-list negative" id="commercialNegatives"></ul>
+            </article>
+
+            <article class="analysis-card institutional tilt reveal" id="institutionalCard">
+              <div class="analysis-tone"></div>
+              <div class="analysis-top">
+                <div>
+                  <h3>Diagnóstico</h3>
+                  <p class="analysis-name">Institucional</p>
+                </div>
+                <div class="analysis-chip" id="institutionalScore">--</div>
+              </div>
+              <div class="analysis-status" id="institutionalStatus">Sem análise</div>
+              <div class="list-title">Pontos positivos</div>
+              <ul class="rich-list positive" id="institutionalPositives"></ul>
+              <div class="list-title">Pontos de melhoria</div>
+              <ul class="rich-list negative" id="institutionalNegatives"></ul>
+            </article>
+
+            <article class="analysis-card social tilt reveal" id="socialCard">
+              <div class="analysis-tone"></div>
+              <div class="analysis-top">
+                <div>
+                  <h3>Diagnóstico</h3>
+                  <p class="analysis-name">Prova social</p>
+                </div>
+                <div class="analysis-chip" id="socialScore">--</div>
+              </div>
+              <div class="analysis-status" id="socialStatus">Sem análise</div>
+              <div class="list-title">Pontos positivos</div>
+              <ul class="rich-list positive" id="socialPositives"></ul>
+              <div class="list-title">Pontos de melhoria</div>
+              <ul class="rich-list negative" id="socialNegatives"></ul>
+            </article>
+          </div>
+
+          <div class="split-grid">
+            <article class="insight-card tilt reveal">
+              <h3>Leitura visual</h3>
+              <p class="big" id="visualSummary">A análise visual aparecerá aqui quando os frames forem processados.</p>
+              <p style="margin-top:14px" id="visualDetails">Este bloco foi pensado para valorizar o que seu backend já retorna em <strong>visual_analysis_summary</strong> e <strong>visual_analysis_details</strong>.</p>
+              <div class="list-title">Observações visuais</div>
+              <ul class="rich-list visual" id="visualObservations"></ul>
+            </article>
+
+            <article class="insight-card tilt reveal">
+              <h3>Ajuste principal</h3>
+              <p class="big" id="primaryAdjustment">Os ajustes estratégicos mais fortes serão mostrados aqui.</p>
+              <p style="margin-top:14px" id="captionText">A legenda para Instagram vinda do backend também aparece aqui, pronta para reutilização criativa.</p>
+              <div class="list-title">Instagram caption</div>
+              <div class="code-scroll" id="instagramCaptionBox">Sem conteúdo ainda.</div>
+            </article>
+          </div>
+
+          <article class="transcript-card tilt reveal" id="transcriptCard">
+            <div class="transcript-toolbar">
+              <div>
                 <h3>Transcrição completa</h3>
-                <p id="transcriptFull">—</p>
+                <p id="transcriptionNotes">As observações sobre precisão da transcrição serão exibidas aqui.</p>
+              </div>
+              <div class="hero-actions">
+                <button class="btn secondary" id="copyTranscriptBtn">Copiar transcrição</button>
+                <button class="btn secondary" id="toggleTranscriptBtn">Expandir / recolher</button>
               </div>
             </div>
+            <div class="code-scroll" id="transcriptBox">A transcrição integral do vídeo será exibida aqui.</div>
+          </article>
 
-            <div class="list-wrap">
-              <div class="list-card positive">
-                <h3>Pontos positivos</h3>
-                <ul id="positives"></ul>
-                <div class="empty hidden" id="positivesEmpty">Nenhum ponto positivo retornado.</div>
-              </div>
-
-              <div class="list-card negative">
-                <h3>Pontos negativos</h3>
-                <ul id="negatives"></ul>
-                <div class="empty hidden" id="negativesEmpty">Nenhum ponto negativo retornado.</div>
-              </div>
-
-              <div class="list-card warning" style="grid-column: 1 / -1;">
-                <h3>Ajustes recomendados</h3>
-                <ul id="adjustments"></ul>
-                <div class="empty hidden" id="adjustmentsEmpty">Nenhum ajuste recomendado.</div>
+          <article class="transcript-card tilt reveal">
+            <div class="transcript-toolbar">
+              <div>
+                <h3>Análise consolidada</h3>
+                <p>Texto bruto completo retornado em <strong>script_analysis</strong>, pronto para leitura detalhada ou cópia.</p>
               </div>
             </div>
-          </section>
-        </section>
-      </div>
+            <div class="code-scroll" id="scriptAnalysisBox">A análise consolidada aparecerá aqui.</div>
+          </article>
+
+          <article class="cta-banner tilt reveal">
+            <div>
+              <h3>Pronto para o próximo criativo</h3>
+              <p class="headline-xl">Suba outro vídeo, troque o modo e continue testando até o criativo ficar impossível de ignorar.</p>
+            </div>
+            <div class="hero-actions">
+              <button class="btn" id="analyzeAgainBtn">Analisar outro vídeo</button>
+              <a class="btn secondary" href="#upload">Voltar ao upload</a>
+            </div>
+          </article>
+
+          <div class="footer-grid">
+            <article class="footer-card tilt reveal">
+              <h3>Modo selecionado</h3>
+              <p class="headline-xl text-gradient" id="selectedModeDisplay">Completo</p>
+              <p class="copy-lg">Este card espelha o modo atual usado na requisição, ajudando a reforçar a sensação de produto guiado e premium.</p>
+              <div class="footer-links">
+                <span class="tiny-chip">POST /analyze</span>
+                <span class="tiny-chip">field: video</span>
+                <span class="tiny-chip">mode: <span id="footerModeRaw">completo</span></span>
+              </div>
+            </article>
+            <article class="footer-card tilt reveal">
+              <h3>Observações</h3>
+              <p class="copy-lg" id="footerNote">A experiência foi desenhada para manter tudo em movimento: fundo, hover, mouse glow, carregamento, cards e resultados.</p>
+            </article>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
   <script>
-    const entryScreen = document.getElementById('entryScreen');
-    const loginHero = document.getElementById('loginHero');
-    const loginBox = document.getElementById('loginBox');
-    const app = document.getElementById('app');
-    const appInfoBox = document.getElementById('appInfoBox');
-    const entrySideInfo = document.getElementById('entrySideInfo');
-    const loginStatus = document.getElementById('loginStatus');
+    const state = {
+      selectedMode: 'completo',
+      selectedFile: null,
+      loading: false,
+      transcriptExpanded: true,
+      lastResponse: null,
+      loadingInterval: null,
+      stageInterval: null,
+      progress: 8
+    };
 
-    function setLoginStatus(message, type = 'info') {
-      loginStatus.classList.remove('hidden');
-      loginStatus.textContent = message;
-      loginStatus.style.background = type === 'error' ? '#fff1f3' : '#eaf5ff';
-      loginStatus.style.borderColor = type === 'error' ? '#ffc9d0' : '#cfe7ff';
-      loginStatus.style.color = type === 'error' ? '#a61b34' : '#1d4e89';
+    const modeMap = {
+      completo: {
+        label: 'Completo',
+        previewTitle: 'Visão total do criativo em múltiplas dimensões.',
+        previewText: 'Equilibra vendas, branding e prova social para produzir uma leitura estratégica geral.',
+        previewScore: 88,
+        previewStatus: 'Análise completa pronta para iniciar'
+      },
+      comercial: {
+        label: 'Comercial',
+        previewTitle: 'Foco total em oferta, persuasão e conversão.',
+        previewText: 'Ideal para validar gancho, desejo, clareza da oferta, argumento e CTA.',
+        previewScore: 84,
+        previewStatus: 'Modo de vendas selecionado'
+      },
+      institucional: {
+        label: 'Institucional',
+        previewTitle: 'Marca, narrativa e percepção em primeiro lugar.',
+        previewText: 'Prioriza construção de autoridade, coerência visual e força emocional da mensagem.',
+        previewScore: 79,
+        previewStatus: 'Modo de marca selecionado'
+      },
+      prova_social: {
+        label: 'Prova social',
+        previewTitle: 'Confiança, validação e credibilidade acima de tudo.',
+        previewText: 'Analisa autenticidade, clareza dos resultados e força percebida da prova apresentada.',
+        previewScore: 82,
+        previewStatus: 'Modo de credibilidade selecionado'
+      }
+    };
+
+    const els = {
+      body: document.body,
+      gridCanvas: document.getElementById('gridCanvas'),
+      particleCanvas: document.getElementById('particleCanvas'),
+      loadingOverlay: document.getElementById('loadingOverlay'),
+      progressBar: document.getElementById('progressBar'),
+      progressPercent: document.getElementById('progressPercent'),
+      progressLabel: document.getElementById('progressLabel'),
+      loadingStatusText: document.getElementById('loadingStatusText'),
+      loadingStages: [...document.querySelectorAll('#loadingStages .loading-stage')],
+      modeCards: [...document.querySelectorAll('.mode-card')],
+      selectedModeLabel: document.getElementById('selectedModeLabel'),
+      selectedModeDisplay: document.getElementById('selectedModeDisplay'),
+      footerModeRaw: document.getElementById('footerModeRaw'),
+      previewScoreCircle: document.getElementById('previewScoreCircle'),
+      previewScore: document.getElementById('previewScore'),
+      previewHeadline: document.getElementById('previewHeadline'),
+      previewText: document.getElementById('previewText'),
+      previewStatusBadge: document.getElementById('previewStatusBadge'),
+      videoInput: document.getElementById('videoInput'),
+      fileNote: document.getElementById('fileNote'),
+      dropZone: document.getElementById('dropZone'),
+      analyzeBtn: document.getElementById('analyzeBtn'),
+      topAnalyzeBtn: document.getElementById('topAnalyzeBtn'),
+      heroScrollUpload: document.getElementById('heroScrollUpload'),
+      heroScrollResults: document.getElementById('heroScrollResults'),
+      results: document.getElementById('results'),
+      resultScoreCircle: document.getElementById('resultScoreCircle'),
+      resultScore: document.getElementById('resultScore'),
+      resultHeadline: document.getElementById('resultHeadline'),
+      resultSummary: document.getElementById('resultSummary'),
+      resultStatusBadge: document.getElementById('resultStatusBadge'),
+      executiveTitle: document.getElementById('executiveTitle'),
+      executiveCopy: document.getElementById('executiveCopy'),
+      resultModeLabel: document.getElementById('resultModeLabel'),
+      resultOutcomeText: document.getElementById('resultOutcomeText'),
+      visualCountValue: document.getElementById('visualCountValue'),
+      positiveCountValue: document.getElementById('positiveCountValue'),
+      negativeCountValue: document.getElementById('negativeCountValue'),
+      visualSummary: document.getElementById('visualSummary'),
+      visualDetails: document.getElementById('visualDetails'),
+      visualObservations: document.getElementById('visualObservations'),
+      transcriptionNotes: document.getElementById('transcriptionNotes'),
+      transcriptBox: document.getElementById('transcriptBox'),
+      scriptAnalysisBox: document.getElementById('scriptAnalysisBox'),
+      primaryAdjustment: document.getElementById('primaryAdjustment'),
+      captionText: document.getElementById('captionText'),
+      instagramCaptionBox: document.getElementById('instagramCaptionBox'),
+      copyScriptBtn: document.getElementById('copyScriptBtn'),
+      copyTranscriptBtn: document.getElementById('copyTranscriptBtn'),
+      scrollTranscriptBtn: document.getElementById('scrollTranscriptBtn'),
+      toggleTranscriptBtn: document.getElementById('toggleTranscriptBtn'),
+      transcriptCard: document.getElementById('transcriptCard'),
+      analyzeAgainBtn: document.getElementById('analyzeAgainBtn'),
+      errorBanner: document.getElementById('errorBanner'),
+      pipelineTimelineItems: [...document.querySelectorAll('#pipelineTimeline .timeline-item')],
+      commercialScore: document.getElementById('commercialScore'),
+      institutionalScore: document.getElementById('institutionalScore'),
+      socialScore: document.getElementById('socialScore'),
+      commercialStatus: document.getElementById('commercialStatus'),
+      institutionalStatus: document.getElementById('institutionalStatus'),
+      socialStatus: document.getElementById('socialStatus'),
+      commercialPositives: document.getElementById('commercialPositives'),
+      commercialNegatives: document.getElementById('commercialNegatives'),
+      institutionalPositives: document.getElementById('institutionalPositives'),
+      institutionalNegatives: document.getElementById('institutionalNegatives'),
+      socialPositives: document.getElementById('socialPositives'),
+      socialNegatives: document.getElementById('socialNegatives'),
+      footerNote: document.getElementById('footerNote')
+    };
+
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    const scrollToEl = (id) => document.querySelector(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    function setMode(mode) {
+      state.selectedMode = mode;
+      const meta = modeMap[mode] || modeMap.completo;
+      els.modeCards.forEach(card => card.classList.toggle('active', card.dataset.mode === mode));
+      els.selectedModeLabel.textContent = meta.label;
+      els.selectedModeDisplay.textContent = meta.label;
+      els.footerModeRaw.textContent = mode;
+      els.previewScoreCircle.style.setProperty('--progress', meta.previewScore);
+      els.previewScore.textContent = meta.previewScore;
+      els.previewHeadline.textContent = meta.previewTitle;
+      els.previewText.textContent = meta.previewText;
+      els.previewStatusBadge.textContent = meta.previewStatus;
+      els.resultModeLabel.textContent = meta.label;
     }
 
-    function showEntry() {
-      entryScreen.classList.remove('hidden');
-      loginHero.classList.add('hidden');
-      loginBox.classList.add('hidden');
-      app.classList.add('hidden');
-      appInfoBox.classList.add('hidden');
-      entrySideInfo.classList.remove('hidden');
-      loginStatus.classList.add('hidden');
+    function formatFileSize(bytes = 0) {
+      if (!bytes) return '0 B';
+      const units = ['B', 'KB', 'MB', 'GB'];
+      let i = 0;
+      let size = bytes;
+      while (size >= 1024 && i < units.length - 1) {
+        size /= 1024;
+        i++;
+      }
+      return `${size.toFixed(size >= 10 || i === 0 ? 0 : 1)} ${units[i]}`;
     }
 
-    function goToLogin() {
-      entryScreen.classList.add('hidden');
-      loginHero.classList.remove('hidden');
-      loginBox.classList.remove('hidden');
-      app.classList.add('hidden');
-      appInfoBox.classList.add('hidden');
-      entrySideInfo.classList.add('hidden');
-      loginStatus.classList.add('hidden');
-    }
-
-    function showApp() {
-      entryScreen.classList.add('hidden');
-      loginHero.classList.add('hidden');
-      loginBox.classList.add('hidden');
-      app.classList.remove('hidden');
-      appInfoBox.classList.remove('hidden');
-      entrySideInfo.classList.add('hidden');
-      loginStatus.classList.add('hidden');
-    }
-
-    function backToEntry() {
-      localStorage.removeItem('portal_entry_ok');
-      showEntry();
-    }
-
-    function clearSessionAndReload() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('portal_entry_ok');
-      location.reload();
-    }
-
-    function logout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('portal_entry_ok');
-      location.reload();
-    }
-
-    async function login() {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!email || !password) {
-        setLoginStatus('Preencha e-mail e senha para continuar.', 'error');
+    function setFile(file) {
+      state.selectedFile = file || null;
+      if (!file) {
+        els.fileNote.textContent = 'Nenhum arquivo selecionado ainda.';
         return;
       }
-
-      try {
-        setLoginStatus('Validando acesso...');
-        const response = await fetch('/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-
-        const data = await response.json();
-
-        if (data.error) {
-          setLoginStatus(data.error, 'error');
-          return;
-        }
-
-        localStorage.setItem('token', data.token || '');
-        localStorage.setItem('portal_entry_ok', '1');
-        setLoginStatus('Acesso confirmado. Abrindo o ambiente principal...');
-        showApp();
-      } catch (error) {
-        setLoginStatus('Erro no login. Tente novamente.', 'error');
-      }
+      els.fileNote.innerHTML = `Arquivo pronto: <strong>${file.name}</strong> · ${formatFileSize(file.size)} · modo <strong>${(modeMap[state.selectedMode] || modeMap.completo).label}</strong>`;
+      els.previewHeadline.textContent = 'Arquivo carregado. Tudo pronto para iniciar o pipeline.';
+      els.previewText.textContent = 'Clique em “Analisar agora” para enviar o vídeo ao servidor e ativar todas as animações de processamento.';
+      els.previewStatusBadge.textContent = 'Arquivo pronto para análise';
     }
 
-    function fillList(id, emptyId, items) {
-      const list = document.getElementById(id);
-      const empty = document.getElementById(emptyId);
+    function showError(message) {
+      els.errorBanner.style.display = 'block';
+      els.errorBanner.textContent = message;
+    }
 
-      list.innerHTML = '';
+    function clearError() {
+      els.errorBanner.style.display = 'none';
+      els.errorBanner.textContent = '';
+    }
 
-      if (!Array.isArray(items) || items.length === 0) {
-        empty.classList.remove('hidden');
-        return;
-      }
-
-      empty.classList.add('hidden');
-
-      items.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        list.appendChild(li);
+    function setTimelineState(activeIndex = 0, doneUntil = -1) {
+      els.pipelineTimelineItems.forEach((item, idx) => {
+        item.classList.toggle('active', idx === activeIndex);
+        item.classList.toggle('done', idx <= doneUntil);
+        const stateEl = item.querySelector('.timeline-state');
+        stateEl.textContent = idx < activeIndex || idx <= doneUntil ? 'Done' : idx === activeIndex ? 'Live' : 'Idle';
       });
     }
 
-    function applyStatusStyle(resultado) {
-      const label = document.getElementById('statusLabel');
-      label.classList.remove('success-text', 'warning-text', 'danger-text');
+    function startLoadingUI() {
+      state.loading = true;
+      state.progress = 8;
+      els.loadingOverlay.classList.add('show');
+      els.progressBar.style.width = '8%';
+      els.progressPercent.textContent = '08%';
+      els.progressLabel.textContent = 'Upload iniciado';
+      els.loadingStatusText.textContent = 'Preparando upload seguro e iniciando fluxo de análise.';
+      els.loadingStages.forEach((stage, idx) => {
+        stage.classList.toggle('active', idx === 0);
+        stage.classList.toggle('done', false);
+      });
+      setTimelineState(0, -1);
 
-      if (resultado === 'APROVADO') label.classList.add('success-text');
-      else if (resultado === 'AJUSTAR') label.classList.add('warning-text');
-      else label.classList.add('danger-text');
+      const progressSteps = [
+        { p: 12, stage: 0, label: 'Enviando arquivo', text: 'Seu vídeo está sendo recebido e validado pelo servidor.' },
+        { p: 28, stage: 1, label: 'Transcrevendo áudio', text: 'A IA está capturando a fala com máxima fidelidade possível.' },
+        { p: 52, stage: 2, label: 'Extraindo frames', text: 'Frames do vídeo estão sendo preparados para leitura visual.' },
+        { p: 71, stage: 2, label: 'Analisando composição visual', text: 'Estamos avaliando enquadramento, clareza, branding e prova visual.' },
+        { p: 87, stage: 3, label: 'Gerando diagnóstico estratégico', text: 'A IA está consolidando score, status e recomendações acionáveis.' },
+        { p: 95, stage: 3, label: 'Finalizando resposta', text: 'Organizando resultado completo para renderização dinâmica na interface.' }
+      ];
+
+      let index = 0;
+      clearInterval(state.loadingInterval);
+
+      state.loadingInterval = setInterval(() => {
+        if (index >= progressSteps.length) return;
+        const step = progressSteps[index];
+        state.progress = step.p;
+        els.progressBar.style.width = `${step.p}%`;
+        els.progressPercent.textContent = `${String(step.p).padStart(2, '0')}%`;
+        els.progressLabel.textContent = step.label;
+        els.loadingStatusText.textContent = step.text;
+        els.loadingStages.forEach((stage, idx) => {
+          stage.classList.toggle('active', idx === step.stage);
+          stage.classList.toggle('done', idx < step.stage);
+        });
+        setTimelineState(step.stage, step.stage - 1);
+        index++;
+      }, 1300);
     }
 
-    async function send() {
-      const fileInput = document.getElementById('file');
-      const file = fileInput.files[0];
-      const result = document.getElementById('result');
-      const status = document.getElementById('status');
-      const statusBadge = document.getElementById('statusBadge');
-      const uploadCard = document.getElementById('uploadCard');
-      const analyzeBtn = document.getElementById('analyzeBtn');
+    function finishLoadingUI() {
+      clearInterval(state.loadingInterval);
+      state.progress = 100;
+      els.progressBar.style.width = '100%';
+      els.progressPercent.textContent = '100%';
+      els.progressLabel.textContent = 'Concluído';
+      els.loadingStatusText.textContent = 'Resposta recebida. Preparando transição final do resultado para a landing.';
+      els.loadingStages.forEach((stage) => {
+        stage.classList.remove('active');
+        stage.classList.add('done');
+      });
+      setTimelineState(3, 3);
+      setTimeout(() => {
+        els.loadingOverlay.classList.remove('show');
+        state.loading = false;
+      }, 650);
+    }
 
-      if (!file) {
-        status.textContent = 'Selecione um vídeo antes de iniciar.';
-        statusBadge.textContent = 'Arquivo ausente';
+    function getStatusClass(status = '') {
+      const normalized = String(status).toUpperCase();
+      if (normalized.includes('REPROVADO')) return 'status-rejected';
+      if (normalized.includes('AJUSTES')) return 'status-adjust';
+      if (normalized.includes('APROVADO')) return 'status-approved';
+      return 'status-adjust';
+    }
+
+    function listItems(target, items = []) {
+      target.innerHTML = '';
+      const safeItems = Array.isArray(items) ? items : [];
+      if (!safeItems.length) {
+        target.innerHTML = '<li>Sem itens disponíveis nesta etapa.</li>';
+        return;
+      }
+      safeItems.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.style.animation = `fadeUp .45s ease ${idx * 70}ms both`;
+        li.textContent = item;
+        target.appendChild(li);
+      });
+    }
+
+    function setAnalysisCard(type, data = {}) {
+      const scoreEl = els[`${type}Score`];
+      const statusEl = els[`${type}Status`];
+      const positivesEl = els[`${type}Positives`];
+      const negativesEl = els[`${type}Negatives`];
+      scoreEl.textContent = data?.nota ?? '--';
+      statusEl.textContent = data?.status || 'Sem análise';
+      listItems(positivesEl, data?.pontos_positivos || []);
+      listItems(negativesEl, data?.pontos_negativos || []);
+    }
+
+    function valueOrFallback(value, fallback = '—') {
+      return value === undefined || value === null || value === '' ? fallback : value;
+    }
+
+    function applyResult(payload) {
+      state.lastResponse = payload;
+      const score = clamp(Number(payload?.score ?? 0), 0, 100);
+      const status = valueOrFallback(payload?.resultado, 'Sem status');
+      const summary = valueOrFallback(payload?.summary, 'Sem resumo disponível.');
+      const selectedLabel = valueOrFallback(payload?.selected_mode_label, (modeMap[state.selectedMode] || modeMap.completo).label);
+      const evaluations = payload?.evaluations || {};
+
+      els.results.classList.add('show');
+      requestAnimationFrame(() => {
+        document.querySelectorAll('#results .reveal').forEach((el, index) => {
+          setTimeout(() => el.classList.add('in'), index * 45);
+        });
+      });
+
+      els.resultScoreCircle.style.setProperty('--progress', score);
+      els.resultScore.textContent = score;
+      els.resultHeadline.textContent = status;
+      els.resultSummary.textContent = summary;
+      els.resultStatusBadge.textContent = status;
+      els.resultStatusBadge.className = `status-badge ${getStatusClass(status)}`;
+      els.executiveTitle.textContent = selectedLabel === 'Completo'
+        ? 'Leitura completa pronta para orientar o próximo ajuste do criativo.'
+        : `Modo ${selectedLabel} concluído com foco estratégico específico.`;
+      els.executiveCopy.textContent = summary;
+      els.resultModeLabel.textContent = selectedLabel;
+      els.resultOutcomeText.textContent = status;
+
+      const visualObservations = payload?.visual_observations || [];
+      const positives = payload?.positives || [];
+      const negatives = payload?.negatives || [];
+      els.visualCountValue.textContent = String(visualObservations.length).padStart(2, '0');
+      els.positiveCountValue.textContent = String(positives.length).padStart(2, '0');
+      els.negativeCountValue.textContent = String(negatives.length).padStart(2, '0');
+
+      els.visualSummary.textContent = valueOrFallback(payload?.visual_analysis_summary, 'Sem resumo visual.');
+      els.visualDetails.textContent = valueOrFallback(payload?.visual_analysis_details, 'Sem detalhamento visual.');
+      listItems(els.visualObservations, visualObservations);
+
+      els.primaryAdjustment.textContent = Array.isArray(payload?.adjustments) && payload.adjustments.length
+        ? payload.adjustments[0]
+        : 'Sem ajuste principal informado.';
+      els.captionText.textContent = valueOrFallback(payload?.instagram_caption, 'Sem legenda sugerida.');
+      els.instagramCaptionBox.textContent = valueOrFallback(payload?.instagram_caption, 'Sem legenda sugerida.');
+
+      els.transcriptionNotes.textContent = valueOrFallback(payload?.transcription_notes, 'Sem observações de transcrição.');
+      els.transcriptBox.textContent = valueOrFallback(payload?.transcript_full, 'Sem transcrição disponível.');
+      els.scriptAnalysisBox.textContent = valueOrFallback(payload?.script_analysis, 'Sem análise consolidada disponível.');
+
+      const commercial = evaluations?.comercial || evaluations?.selected || {};
+      const institutional = evaluations?.institucional || evaluations?.selected || {};
+      const social = evaluations?.prova_social || evaluations?.selected || {};
+
+      if (payload?.display_mode === 'single') {
+        const selectedMode = payload?.selected_mode;
+        setAnalysisCard('commercial', selectedMode === 'comercial' ? commercial : { nota: '--', status: 'Disponível apenas no modo completo', pontos_positivos: [], pontos_negativos: [] });
+        setAnalysisCard('institutional', selectedMode === 'institucional' ? institutional : { nota: '--', status: 'Disponível apenas no modo completo', pontos_positivos: [], pontos_negativos: [] });
+        setAnalysisCard('social', selectedMode === 'prova_social' ? social : { nota: '--', status: 'Disponível apenas no modo completo', pontos_positivos: [], pontos_negativos: [] });
+      } else {
+        setAnalysisCard('commercial', commercial);
+        setAnalysisCard('institutional', institutional);
+        setAnalysisCard('social', social);
+      }
+
+      els.selectedModeDisplay.textContent = selectedLabel;
+      els.footerModeRaw.textContent = payload?.selected_mode || state.selectedMode;
+      els.footerNote.textContent = payload?.summary || 'Resultado processado com sucesso.';
+
+      setTimeout(() => scrollToEl('#results'), 180);
+    }
+
+    async function copyText(text, fallbackLabel) {
+      try {
+        await navigator.clipboard.writeText(text || '');
+        flashButton(fallbackLabel, 'Copiado!');
+      } catch {
+        flashButton(fallbackLabel, 'Falhou ao copiar');
+      }
+    }
+
+    function flashButton(button, label) {
+      if (!button) return;
+      const original = button.textContent;
+      button.textContent = label;
+      setTimeout(() => button.textContent = original, 1500);
+    }
+
+    async function analyzeVideo() {
+      clearError();
+      if (state.loading) return;
+      if (!state.selectedFile) {
+        showError('Selecione um arquivo de vídeo ou áudio antes de iniciar a análise.');
+        scrollToEl('#upload');
         return;
       }
 
-      const fd = new FormData();
-      fd.append('video', file);
-
-      uploadCard.classList.add('loading');
-      analyzeBtn.disabled = true;
-      status.textContent = 'Enviando arquivo e processando com IA...';
-      statusBadge.textContent = 'Processando análise';
-      document.getElementById('fileNameInfo').textContent = file.name;
+      const formData = new FormData();
+      formData.append('video', state.selectedFile);
+      formData.append('mode', state.selectedMode);
 
       try {
+        startLoadingUI();
         const response = await fetch('/analyze', {
           method: 'POST',
-          body: fd
+          body: formData
         });
 
-        const data = await response.json();
-        console.log('RESPOSTA:', data);
-
-        if (data.error) {
-          status.textContent = data.detalhe ? `${data.error}: ${data.detalhe}` : data.error;
-          statusBadge.textContent = 'Falha na análise';
-          uploadCard.classList.remove('loading');
-          analyzeBtn.disabled = false;
-          return;
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data?.detalhe || data?.error || 'Falha ao analisar vídeo.');
         }
 
-        result.classList.remove('hidden');
-
-        document.getElementById('statusLabel').textContent = data.resultado || '—';
-        document.getElementById('score').textContent = data.score ?? '0';
-        document.getElementById('summary').textContent = data.summary || 'Sem resumo';
-        document.getElementById('scriptAnalysis').textContent = data.script_analysis || 'Sem análise';
-        document.getElementById('instagramCaption').textContent = data.instagram_caption || 'Sem legenda';
-        document.getElementById('transcriptFull').textContent = data.transcript_full || 'Sem transcrição';
-
-        fillList('positives', 'positivesEmpty', data.positives);
-        fillList('negatives', 'negativesEmpty', data.negatives);
-        fillList('adjustments', 'adjustmentsEmpty', data.adjustments);
-
-        applyStatusStyle(data.resultado);
-
-        status.textContent = 'Análise concluída com sucesso.';
-        statusBadge.textContent = 'Resultado disponível';
+        finishLoadingUI();
+        setTimeout(() => applyResult(data), 720);
       } catch (error) {
-        status.textContent = 'Erro ao processar a análise.';
-        statusBadge.textContent = 'Erro de comunicação';
-      } finally {
-        uploadCard.classList.remove('loading');
-        analyzeBtn.disabled = false;
+        clearInterval(state.loadingInterval);
+        els.loadingOverlay.classList.remove('show');
+        state.loading = false;
+        setTimelineState(0, -1);
+        showError(error?.message || 'Erro inesperado durante a análise.');
+        scrollToEl('#upload');
       }
     }
 
-    document.getElementById('file').addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      document.getElementById('fileNameInfo').textContent = file ? file.name : 'Nenhum arquivo selecionado.';
-    });
+    function initModeCards() {
+      els.modeCards.forEach(card => {
+        card.addEventListener('click', () => setMode(card.dataset.mode));
+      });
+      setMode('completo');
+    }
 
-    showEntry();
+    function initFileHandling() {
+      els.videoInput.addEventListener('change', (e) => setFile(e.target.files?.[0] || null));
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        els.dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          els.dropZone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        els.dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          els.dropZone.classList.remove('dragover');
+        });
+      });
+
+      els.dropZone.addEventListener('drop', (e) => {
+        const file = e.dataTransfer?.files?.[0];
+        if (file) {
+          setFile(file);
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          els.videoInput.files = dt.files;
+        }
+      });
+    }
+
+    function initButtons() {
+      els.analyzeBtn.addEventListener('click', analyzeVideo);
+      els.topAnalyzeBtn.addEventListener('click', () => scrollToEl('#upload'));
+      els.heroScrollUpload.addEventListener('click', () => scrollToEl('#upload'));
+      els.heroScrollResults.addEventListener('click', () => scrollToEl('#results'));
+      els.copyScriptBtn.addEventListener('click', () => copyText(state.lastResponse?.script_analysis || '', els.copyScriptBtn));
+      els.copyTranscriptBtn.addEventListener('click', () => copyText(state.lastResponse?.transcript_full || '', els.copyTranscriptBtn));
+      els.scrollTranscriptBtn.addEventListener('click', () => scrollToEl('#transcriptCard'));
+      els.toggleTranscriptBtn.addEventListener('click', () => {
+        state.transcriptExpanded = !state.transcriptExpanded;
+        els.transcriptBox.style.maxHeight = state.transcriptExpanded ? '380px' : '92px';
+      });
+      els.analyzeAgainBtn.addEventListener('click', () => scrollToEl('#upload'));
+    }
+
+    function initReveal() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add('in');
+        });
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }
+
+    function initTilt() {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) return;
+
+      document.querySelectorAll('.tilt').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+          const rotateY = (x - 0.5) * 12;
+          const rotateX = (0.5 - y) * 10;
+          card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-2px)`;
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = '';
+        });
+      });
+    }
+
+    function initMouseReactiveBackground() {
+      let rafId = null;
+      window.addEventListener('mousemove', (e) => {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+          document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+          const shift = ((e.clientX / window.innerWidth) - 0.5) * 24;
+          document.documentElement.style.setProperty('--hero-shift', `${shift}px`);
+        });
+      });
+
+      window.addEventListener('scroll', () => {
+        const ratio = window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight);
+        document.documentElement.style.setProperty('--scroll', ratio.toFixed(4));
+      }, { passive: true });
+    }
+
+    function initParticleField() {
+      const canvas = els.particleCanvas;
+      const ctx = canvas.getContext('2d');
+      let dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const particles = [];
+      const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      const count = 80;
+
+      function resize() {
+        canvas.width = Math.floor(window.innerWidth * dpr);
+        canvas.height = Math.floor(window.innerHeight * dpr);
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function seed() {
+        particles.length = 0;
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            vx: (Math.random() - .5) * .4,
+            vy: (Math.random() - .5) * .4,
+            r: Math.random() * 1.8 + .6,
+            a: Math.random() * .6 + .12
+          });
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          if (dist < 140) {
+            p.vx -= (dx / dist) * 0.004;
+            p.vy -= (dy / dist) * 0.004;
+          }
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vx *= 0.994;
+          p.vy *= 0.994;
+
+          if (p.x < -20) p.x = window.innerWidth + 20;
+          if (p.x > window.innerWidth + 20) p.x = -20;
+          if (p.y < -20) p.y = window.innerHeight + 20;
+          if (p.y > window.innerHeight + 20) p.y = -20;
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255, ${130 + i % 60}, ${80 + i % 40}, ${p.a})`;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+
+          for (let j = i + 1; j < particles.length; j++) {
+            const q = particles[j];
+            const ddx = q.x - p.x;
+            const ddy = q.y - p.y;
+            const d = Math.sqrt(ddx * ddx + ddy * ddy);
+            if (d < 110) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(255,150,100,${(1 - d / 110) * 0.08})`;
+              ctx.lineWidth = 1;
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(q.x, q.y);
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      }, { passive: true });
+      window.addEventListener('resize', () => { resize(); seed(); });
+
+      resize();
+      seed();
+      draw();
+    }
+
+    function initGridGlow() {
+      const canvas = els.gridCanvas;
+      const ctx = canvas.getContext('2d');
+      let dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+      function resize() {
+        canvas.width = Math.floor(window.innerWidth * dpr);
+        canvas.height = Math.floor(window.innerHeight * dpr);
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        const gap = 42;
+        const offsetX = (mouse.x / window.innerWidth) * 10;
+        const offsetY = (mouse.y / window.innerHeight) * 10;
+
+        for (let x = -gap; x < window.innerWidth + gap; x += gap) {
+          ctx.beginPath();
+          ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+          ctx.moveTo(x + offsetX, 0);
+          ctx.lineTo(x + offsetX, window.innerHeight);
+          ctx.stroke();
+        }
+
+        for (let y = -gap; y < window.innerHeight + gap; y += gap) {
+          ctx.beginPath();
+          ctx.strokeStyle = 'rgba(255,255,255,0.022)';
+          ctx.moveTo(0, y + offsetY);
+          ctx.lineTo(window.innerWidth, y + offsetY);
+          ctx.stroke();
+        }
+
+        const gradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 280);
+        gradient.addColorStop(0, 'rgba(255,106,0,0.12)');
+        gradient.addColorStop(.35, 'rgba(255,106,0,0.05)');
+        gradient.addColorStop(1, 'rgba(255,106,0,0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+        requestAnimationFrame(render);
+      }
+
+      window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      }, { passive: true });
+      window.addEventListener('resize', resize);
+      resize();
+      render();
+    }
+
+    function injectKeyframes() {
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    function init() {
+      injectKeyframes();
+      initModeCards();
+      initFileHandling();
+      initButtons();
+      initReveal();
+      initTilt();
+      initMouseReactiveBackground();
+      initParticleField();
+      initGridGlow();
+      setTimelineState(0, -1);
+    }
+
+    init();
   </script>
 </body>
 </html>
